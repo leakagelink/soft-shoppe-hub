@@ -8,6 +8,13 @@
       "when": 1791648143959,
       "tag": "0000_commerce_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791648813901,
+      "tag": "0001_commerce_operations",
+      "breakpoints": true
     }
   ]
 }
