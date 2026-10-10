@@ -1,0 +1,6 @@
+import {createFileRoute,Link} from '@tanstack/react-router';
+import {ArrowUpRight} from 'lucide-react';
+import {useStore,catalogueOptions} from '@/components/store-context';
+import {pageHead,productImages} from '@/lib/catalogue';
+export const Route=createFileRoute('/categories')({head:()=>pageHead('Discover by category','Find thoughtful essentials for your home, your desk, your travels and everything in between.'),loader:({context})=>context.queryClient.ensureQueryData(catalogueOptions),component:Categories});
+function Categories(){const store=useStore();return <main className="store-container page-main"><p className="eyebrow mb-3 text-brand">FOLLOW YOUR LITTLE CURIOSITY</p><h1 className="page-title">Find your kind of thing</h1><p className="mb-9 text-sm text-muted-foreground">A little of everything, thoughtfully brought together.</p><div className="grid grid-cols-2 gap-5 md:grid-cols-3">{store.categories.map(c=><Link key={c.id} to="/shop" search={{q:'',category:c.id}} className="category-tile"><img src={productImages[c.image_key]} alt={c.name} width={512} height={512} loading="lazy" className="aspect-square"/><span className="!px-5 !py-5 !text-sm">{c.name}<ArrowUpRight size={18}/></span></Link>)}</div></main>}
