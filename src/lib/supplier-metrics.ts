@@ -1,0 +1,3 @@
+export function supplierMetrics(suppliers:{id:string;name:string}[],tasks:{supplier_id:string;status:string;attempts:number;due_at:string|null}[],now:number){
+ return suppliers.map(s=>{const rows=tasks.filter(t=>t.supplier_id===s.id);return {supplier:s.name,tasks:rows.length,completed:rows.filter(t=>t.status==='completed').length,failed:rows.filter(t=>t.status==='failed').length,retries:rows.reduce((sum,t)=>sum+t.attempts,0),overdue:rows.filter(t=>!['completed','cancelled'].includes(t.status)&&t.due_at!==null&&Date.parse(t.due_at)<now).length}});
+}
