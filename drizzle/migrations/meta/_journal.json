@@ -22,6 +22,13 @@
       "when": 1791648850334,
       "tag": "0002_transactional_order_reservations",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791649143530,
+      "tag": "0003_operations_integrity_and_request_review",
+      "breakpoints": true
     }
   ]
 }
