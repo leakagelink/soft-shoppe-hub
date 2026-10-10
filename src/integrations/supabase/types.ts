@@ -428,11 +428,14 @@ export type Database = {
       orders: {
         Row: {
           address_snapshot: Json | null
+          cod_collected_at: string | null
+          cod_collection_reference: string | null
           created_at: string
           delivered_at: string | null
           discount_paise: number
           id: string
           idempotency_key: string | null
+          payment_method: string
           payment_status: string
           reservation_expires_at: string | null
           shipping_paise: number
@@ -444,11 +447,14 @@ export type Database = {
         }
         Insert: {
           address_snapshot?: Json | null
+          cod_collected_at?: string | null
+          cod_collection_reference?: string | null
           created_at?: string
           delivered_at?: string | null
           discount_paise?: number
           id?: string
           idempotency_key?: string | null
+          payment_method?: string
           payment_status?: string
           reservation_expires_at?: string | null
           shipping_paise?: number
@@ -460,11 +466,14 @@ export type Database = {
         }
         Update: {
           address_snapshot?: Json | null
+          cod_collected_at?: string | null
+          cod_collection_reference?: string | null
           created_at?: string
           delivered_at?: string | null
           discount_paise?: number
           id?: string
           idempotency_key?: string | null
+          payment_method?: string
           payment_status?: string
           reservation_expires_at?: string | null
           shipping_paise?: number
@@ -536,6 +545,38 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: true
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_images: {
+        Row: {
+          created_at: string
+          id: string
+          object_path: string
+          product_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          object_path: string
+          product_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          object_path?: string
+          product_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -658,6 +699,54 @@ export type Database = {
         }
         Relationships: []
       }
+      refunds: {
+        Row: {
+          amount_paise: number
+          completed_at: string | null
+          created_at: string
+          id: string
+          order_id: string
+          request_id: string
+          status: string
+          transfer_reference: string | null
+        }
+        Insert: {
+          amount_paise: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          request_id: string
+          status?: string
+          transfer_reference?: string | null
+        }
+        Update: {
+          amount_paise?: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          request_id?: string
+          status?: string
+          transfer_reference?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: true
+            referencedRelation: "order_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shipping_rules: {
         Row: {
           active: boolean
@@ -729,6 +818,57 @@ export type Database = {
           },
           {
             foreignKeyName: "supplier_products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_tasks: {
+        Row: {
+          attempts: number
+          due_at: string | null
+          fulfillment_id: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string
+          status: string
+          supplier_id: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          due_at?: string | null
+          fulfillment_id: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          status?: string
+          supplier_id: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          due_at?: string | null
+          fulfillment_id?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          status?: string
+          supplier_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_tasks_fulfillment_id_fkey"
+            columns: ["fulfillment_id"]
+            isOneToOne: true
+            referencedRelation: "fulfillments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_tasks_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
@@ -856,7 +996,34 @@ export type Database = {
         Returns: undefined
       }
       check_delivery: { Args: { _pincode: string }; Returns: Json }
+      collect_cod: {
+        Args: { _amount: number; _order: string; _reference: string }
+        Returns: undefined
+      }
+      complete_cod_refund: {
+        Args: { _id: string; _reference: string }
+        Returns: undefined
+      }
+      complete_cod_request: {
+        Args: { _note: string; _request: string }
+        Returns: undefined
+      }
+      place_cod_order: {
+        Args: {
+          _address: Json
+          _coupon: string
+          _expected: number
+          _items: Json
+          _key: string
+        }
+        Returns: string
+      }
+      prepare_account_deletion: { Args: never; Returns: undefined }
       preview_coupon: { Args: { _code: string; _items: Json }; Returns: Json }
+      quote_cod_order: {
+        Args: { _coupon?: string; _items: Json; _pincode: string }
+        Returns: Json
+      }
       record_captured_payment: {
         Args: {
           _amount: number
@@ -888,6 +1055,10 @@ export type Database = {
           _tracking: string
           _url: string
         }
+        Returns: undefined
+      }
+      update_supplier_task: {
+        Args: { _action: string; _id: string; _note: string }
         Returns: undefined
       }
       update_support_ticket: {
