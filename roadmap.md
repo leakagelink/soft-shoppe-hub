@@ -1,4 +1,5 @@
 # Commerce V1 roadmap
+- [ ] Current request: finish remaining buildable features and extend commerce/security checks; document externally blocked activation
 - [x] COD-only checkout with authoritative totals, stock deduction, idempotency, staff collection evidence and cancellation accounting
 - [x] Private photo uploads and product galleries with expiring catalogue-authorized signed links
 - [x] Automatic supplier-task allocation and manual acknowledgement/failure/retry/dispatch controls
