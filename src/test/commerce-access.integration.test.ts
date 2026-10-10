@@ -4,7 +4,13 @@ import type {Database} from '@/integrations/supabase/types';
 
 const url=process.env['SUPABASE_URL'];const key=process.env['SUPABASE_PUBLISHABLE_KEY'];
 describe.skipIf(!url||!key)('Live anonymous commerce boundaries',()=>{
- function client(){if(!url||!key)throw new Error('Cloud test configuration missing');return createClient<Database>(url,key,{auth:{persistSession:false},global:{fetch:(input,init)=>{const h=new Headers(init?.headers);h.delete('Authorization');h.set('apikey',key);return fetch(input,{...init,headers:h})}})}
+ function client(){
+   if(!url||!key)throw new Error('Cloud test configuration missing');
+   return createClient<Database>(url,key,{
+     auth:{persistSession:false},
+     global:{fetch:(input,init)=>{const h=new Headers(init?.headers);h.delete('Authorization');h.set('apikey',key);return fetch(input,{...init,headers:h})}},
+   });
+ }
  it('does not expose customer addresses',async()=>{const r=await client().from('addresses').select('id').limit(1);expect(r.error!==null||r.data?.length===0).toBe(true)});
  it('does not expose private supplier costs',async()=>{const r=await client().from('supplier_products').select('cost_paise').limit(1);expect(r.error!==null||r.data?.length===0).toBe(true)});
  it('does not expose customer orders',async()=>{const r=await client().from('orders').select('id').limit(1);expect(r.error!==null||r.data?.length===0).toBe(true)});

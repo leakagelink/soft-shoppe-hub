@@ -16,3 +16,6 @@
 - Payment and final payable amounts remain disabled until shipping, tax and Indian gateway configuration are verified; never convert a client preview into a paid order.
 - Guest preview state stays in memory while signed-in cart and wishlist records use Cloud; this avoids presenting transient guest state as durable storage.
 - Dehydrate the per-request Query cache through Router SSR hooks and hydrate it before client rendering; catalogue markup must match across server and browser.
+- Reserve stock and capture verified payments in database transactions with locked order rows; never split inventory and payment state changes across independent requests.
+- Payment-linked reservations require provider reconciliation before release; a timeout alone cannot safely release stock while an external payment may still succeed.
+- Staff mutations validate inputs and database roles; audit triggers and controlled RPCs record operational changes without granting customer status-write access.
