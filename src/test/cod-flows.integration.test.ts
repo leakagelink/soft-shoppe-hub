@@ -7,7 +7,7 @@ describe.skipIf(!url||!key||!publicKey)('Isolated COD customer and staff flows',
  it('prevents overselling, isolates customers, collects and refunds COD, and anonymizes deletion',async()=>{
   if(!url||!key||!publicKey)throw new Error('Test configuration unavailable');
   const admin=createClient(url,key,{auth:{persistSession:false}});const users:string[]=[];const orders:string[]=[];const product='test-'+randomUUID();const pin='999992';let shippingId:string|undefined;
-  const required=<T>(r:{data:T|null;error:unknown}):NonNullable<T>=>{if(r.error||r.data==null)throw new Error('Fixture operation failed');return r.data as NonNullable<T>};
+  const required=<T>(r:{data:T|null;error:unknown}):NonNullable<T>=>{if(r.error)throw new Error('Fixture operation failed');return r.data as NonNullable<T>};
   const clients=[];
   try{
    for(let i=0;i<3;i++){const password=randomUUID()+randomUUID();const email=`commerce-${randomUUID()}@example.invalid`;const created=required(await admin.auth.admin.createUser({email,password,email_confirm:true}));if(!created.user)throw new Error('Test account missing');users.push(created.user.id);const client=createClient(url,publicKey,{auth:{persistSession:false}});required(await client.auth.signInWithPassword({email,password}));clients.push(client)}
