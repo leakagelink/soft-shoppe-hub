@@ -1,4 +1,7 @@
 # Commerce V1 roadmap
+- [ ] Add SKU-based size/colour choices with independent price and stock, and current-stock reorder
+- [ ] Add Hindi/English shopping language, owner-scoped restock notifications and configurable WhatsApp support
+- [ ] Verify new shopping flows and photo uploads; real business number and policies await merchant input
 - [x] Show an animated sticky bag after adding products, with count, subtotal and bag navigation
 - [x] Add shopping entry animations, staggered reveals, photo/card effects and button feedback with reduced-motion support
 - [ ] Finish remaining V1 work: variant-aware purchasing, authenticated upload verification, supplier costs, SEO/consent analytics and backup rehearsal remain outstanding
