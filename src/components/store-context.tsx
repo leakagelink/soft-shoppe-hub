@@ -6,7 +6,7 @@ import { getCatalogue } from '@/lib/commerce.functions';
 import type { Product, Category } from '@/lib/catalogue';
 import { toast } from 'sonner';
 
-export const catalogueOptions = queryOptions({queryKey:['catalogue'],queryFn:()=>getCatalogue(),staleTime:60_000});
+export const catalogueOptions = queryOptions({queryKey:['catalogue'],queryFn:()=>getCatalogue(),staleTime:60_000,refetchInterval:30*60_000});
 type Store = { products:Product[]; categories:Category[]; loading:boolean; error:Error|null; user:User|null; cart:Record<string,number>; wishlist:string[]; location:string; setLocation:(value:string)=>void; addToCart:(id:string)=>void; setQuantity:(id:string,q:number)=>void; toggleWishlist:(id:string)=>void; recentlyViewed:string[]; viewProduct:(id:string)=>void };
 const Context = createContext<Store|null>(null);
 export function StoreProvider({children}:{children:ReactNode}) {

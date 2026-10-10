@@ -19,7 +19,7 @@
 - Reserve stock and capture verified payments in database transactions with locked order rows; never split inventory and payment state changes across independent requests.
 - Payment-linked reservations require provider reconciliation before release; a timeout alone cannot safely release stock while an external payment may still succeed.
 - Staff mutations validate inputs and database roles; audit triggers and controlled RPCs record operational changes without granting customer status-write access.
-- Uploaded product media lives in a private bucket with catalogue-scoped read policies and expiring signed URLs; only catalogue staff may create or remove media.
+- Uploaded product media lives in a private bucket; the public catalogue authorizes paths before server-only signing, and catalogue queries refresh before URL expiry. Only catalogue staff may create or remove media.
 - Supplier tasks are allocated transactionally with COD orders and advanced by controlled staff RPCs; never submit external supplier orders without a tested adapter.
 - Customer account deletion scrubs personal records and deactivates Auth only after active commerce obligations are resolved; financial order history remains anonymized.
 - Order PDFs are owner-authorized receipts until seller tax registration and invoice requirements are verified; never label unverified documents as GST tax invoices.

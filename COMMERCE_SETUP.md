@@ -2,7 +2,17 @@
 
 The current implementation is a development storefront, not a complete production V1. The working catalogue is database-backed and all supplied demonstration products are labelled. The provisional brand name “little things”, generated photos, catalogue names and sample prices are creative placeholders requiring merchant approval.
 
-## Implemented
+## Current COD release
+- All new checkout orders use COD only. The database validates sale approval, product-specific tax, shipping, coupon, stock and final total; duplicate submission keys return the same order. Sample products remain blocked.
+- Private product photo upload and galleries are implemented; catalogue-authorized paths receive expiring signed links. Public storage download policies are removed.
+- Supplier tasks are allocated with orders, with staff acknowledgement, failure evidence, retry scheduling and manual dispatch/tracking. No external supplier automation is claimed without a tested supplier adapter.
+- COD collection requires a delivered order, exact amount and staff reference. Approved full-order cancellations restock own inventory. Full-order returns create refund records after collection; refund transfers are manual and require owner/admin evidence. Returned stock is not automatically made sellable.
+- Customers can download owner-authorized PDF order receipts, not verified GST invoices. Account deletion blocks unresolved commerce obligations, anonymizes retained financial records and deactivates the login.
+- Latest verification: 24 tests passed; 1 isolated-database COD transaction suite skipped because its privileged test connection is unavailable. Anonymous COD/refund/deletion access was denied; public desktop and narrow-screen COD checkout showed no runtime errors or overflow. Basic backend scan and production dependency scan reported no issues. These do not establish complete end-to-end security.
+- Remaining checks: signed-in customer/staff workflows, cross-customer access, upload/receipt/deletion end-to-end and stock concurrency require an isolated authorized test environment. Verified seller tax/legal details are required for GST invoices; supplier specifications are required for external automation.
+- Online gateway credentials are not needed for COD activation. Verified non-demo products, stock, shipping/tax rules, staff roles and operating policies are still required.
+
+## Earlier baseline (historical; superseded above)
 - Public catalogue, categories, product pages, debounced discovery, price sorting and filters.
 - Preview cart with authoritative server subtotal and database-validated coupon preview; final payable/payment states remain blocked.
 - Email/password, Google sign-in and confirmation/recovery flows.
@@ -13,7 +23,7 @@ The current implementation is a development storefront, not a complete productio
 - Customer-private order details and shipment tracking; eligible cancellation/return requests and account-deletion requests. Approval records a staff decision, not a refund or completed deletion.
 - PIN serviceability lookup and product-specific tax/return configuration with integrity constraints.
 
-## Not yet implemented
+## Earlier baseline gaps (historical; superseded above)
 - Gateway order creation, final checkout/coupon transaction, failed/pending payment reconciliation, refunds, expiry reconciliation and concurrent-stock end-to-end tests. Reservation currently does not apply coupons: do not activate checkout using a discounted preview quote.
 - Product image uploads/galleries, variant-aware carts, full banners/collections/content management, supplier API adapters/synchronization/retry queues, failure handling and cost/performance accounting.
 - Return execution, invoices, automatic account deletion and complete privacy retention automation. Storage upload setup attempted but public buckets are blocked; no image-upload integration is claimed.
