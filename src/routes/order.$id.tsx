@@ -8,9 +8,10 @@ import {useStore} from '@/components/store-context';
 import {getOrderDetail,requestOrderAction} from '@/lib/operations.functions';
 import {money,pageHead} from '@/lib/catalogue';
 import {toast} from 'sonner';
+import {downloadOrderReceipt} from '@/lib/invoice.functions';
 export const Route=createFileRoute('/order/$id')({head:()=>pageHead('Order details','Private order items, verified payment status, shipment tracking and customer requests.'),component:OrderDetail});
 function OrderDetail(){
- const {id}=Route.useParams();const {user}=useStore();const fetch=useServerFn(getOrderDetail);const request=useServerFn(requestOrderAction);const [kind,setKind]=useState<'return'|'cancellation'|null>(null);const [busy,setBusy]=useState(false);
+ const {id}=Route.useParams();const {user}=useStore();const fetch=useServerFn(getOrderDetail);const request=useServerFn(requestOrderAction);const receipt=useServerFn(downloadOrderReceipt);const [kind,setKind]=useState<'return'|'cancellation'|null>(null);const [busy,setBusy]=useState(false);
  const query=useQuery({queryKey:['order',user?.id,id],enabled:!!user,retry:false,queryFn:()=>fetch({data:{id}})});const data=query.data;
  return <main className="store-container page-main"><Link to="/orders" className="mb-6 inline-flex items-center gap-2 text-sm"><ArrowLeft size={16}/> All orders</Link><h1 className="page-title">Your delivery details</h1>{!user?<div className="empty-state"><Package size={44}/><p>Sign in to view your private order.</p><Button asChild><Link to="/auth">Sign in</Link></Button></div>:query.isLoading?<p className="py-10">Loading your order…</p>:query.error?<div className="py-10"><p role="alert" className="text-destructive">This order is unavailable for your account.</p><Button className="mt-4" variant="outline" onClick={()=>query.refetch()}>Try again</Button></div>:data&&<>
  <div className="my-8 flex flex-wrap justify-between gap-4 border-y border-border py-6"><div><h2 className="font-semibold">Order {data.order.id.slice(0,8).toUpperCase()}</h2><p className="mt-2 text-sm">{data.order.status.replaceAll('_',' ')} · Payment: {data.order.payment_status}</p></div><p className="text-2xl font-semibold">{money(data.order.total_paise)}</p></div>
