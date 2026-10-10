@@ -1,0 +1,22 @@
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useQuery, queryOptions } from '@tanstack/react-query';
+import type { User } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
+import { getCatalogue } from '@/lib/commerce.functions';
+import type { Product, Category } from '@/lib/catalogue';
+import { toast } from 'sonner';
+
+export const catalogueOptions = queryOptions({queryKey:['catalogue'],queryFn:()=>getCatalogue(),staleTime:60_000});
+type Store = { products:Product[]; categories:Category[]; loading:boolean; error:Error|null; user:User|null; cart:Record<string,number>; wishlist:string[]; location:string; setLocation:(value:string)=>void; addToCart:(id:string)=>void; setQuantity:(id:string,q:number)=>void; toggleWishlist:(id:string)=>void; recentlyViewed:string[]; viewProduct:(id:string)=>void };
+const Context = createContext<Store|null>(null);
+export function StoreProvider({children}:{children:ReactNode}) {
+  const catalogue = useQuery(catalogueOptions);
+  const [user,setUser]=useState<User|null>(null); const [cart,setCart]=useState<Record<string,number>>({}); const [wishlist,setWishlist]=useState<string[]>([]); const [location,setLocation]=useState('Choose your location'); const [recentlyViewed,setRecentlyViewed]=useState<string[]>([]);
+  useEffect(()=> { supabase.auth.getUser().then(({data})=>setUser(data.user)); const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{ if(['INITIAL_SESSION','SIGNED_IN','SIGNED_OUT','USER_UPDATED'].includes(event)) { setUser(session?.user ?? null); if(event==='SIGNED_OUT'){setCart({});setWishlist([]);} } }); return ()=>subscription.unsubscribe(); },[]);
+  useEffect(()=>{ if(!user)return; let active=true; Promise.all([supabase.from('cart_items').select('product_id,quantity').eq('user_id',user.id),supabase.from('wishlist').select('product_id').eq('user_id',user.id)]).then(([c,w])=>{if(active){setCart(prev=>({...prev,...Object.fromEntries((c.data??[]).map(i=>[i.product_id,i.quantity]))}));setWishlist(prev=>Array.from(new Set([...prev,...(w.data??[]).map(i=>i.product_id)])));}});return()=>{active=false}; },[user?.id]);
+  const setQuantity=(id:string,q:number)=>{const quantity=Math.max(0,Math.min(20,q));setCart(prev=>{const next={...prev};if(quantity)next[id]=quantity;else delete next[id];return next}); if(user){ const operation=quantity ? supabase.from('cart_items').upsert({user_id:user.id,product_id:id,quantity},{onConflict:'user_id,product_id'}) : supabase.from('cart_items').delete().eq('user_id',user.id).eq('product_id',id); Promise.resolve(operation).then(({error})=>{if(error)toast.error('Your cart could not be saved. Please try again.');}); } };
+  const addToCart=(id:string)=>{setQuantity(id,(cart[id]??0)+1);toast.success('Added to your bag');};
+  const toggleWishlist=(id:string)=>{const saved=wishlist.includes(id);setWishlist(prev=>saved?prev.filter(p=>p!==id):[...prev,id]); if(user){const operation=saved?supabase.from('wishlist').delete().eq('user_id',user.id).eq('product_id',id):supabase.from('wishlist').insert({user_id:user.id,product_id:id});Promise.resolve(operation).then(({error})=>{if(error)toast.error('Your wishlist could not be saved');});} toast.success(saved?'Removed from wishlist':'Saved to wishlist');};
+  return <Context.Provider value={{products:catalogue.data?.products??[],categories:catalogue.data?.categories??[],loading:catalogue.isLoading,error:catalogue.error,user,cart,wishlist,location,setLocation,addToCart,setQuantity,toggleWishlist,recentlyViewed,viewProduct:(id)=>setRecentlyViewed(prev=>[id,...prev.filter(x=>x!==id)].slice(0,8))}}>{children}</Context.Provider>;
+}
+export function useStore(){const value=useContext(Context);if(!value)throw new Error('Store provider is required');return value;}
