@@ -14,13 +14,444 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      addresses: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          line1: string
+          name: string
+          phone: string
+          pincode: string
+          state: string
+          user_id: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          id?: string
+          line1: string
+          name: string
+          phone: string
+          pincode: string
+          state: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          line1?: string
+          name?: string
+          phone?: string
+          pincode?: string
+          state?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "addresses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cart_items: {
+        Row: {
+          id: string
+          product_id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          product_id: string
+          quantity: number
+          user_id: string
+        }
+        Update: {
+          id?: string
+          product_id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_items_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          active: boolean
+          id: string
+          image_key: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          id: string
+          image_key?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          id?: string
+          image_key?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      inventory: {
+        Row: {
+          product_id: string
+          quantity: number
+          reserved: number
+        }
+        Insert: {
+          product_id: string
+          quantity?: number
+          reserved?: number
+        }
+        Update: {
+          product_id?: string
+          quantity?: number
+          reserved?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          payment_status: string
+          status: string
+          total_paise: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payment_status?: string
+          status?: string
+          total_paise: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payment_status?: string
+          status?: string
+          total_paise?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_variants: {
+        Row: {
+          active: boolean
+          id: string
+          name: string
+          price_paise: number
+          product_id: string
+          sku: string
+        }
+        Insert: {
+          active?: boolean
+          id?: string
+          name: string
+          price_paise: number
+          product_id: string
+          sku: string
+        }
+        Update: {
+          active?: boolean
+          id?: string
+          name?: string
+          price_paise?: number
+          product_id?: string
+          sku?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string
+          fulfillment_model: string
+          id: string
+          image_key: string
+          is_demo: boolean
+          name: string
+          price_paise: number
+          sku: string
+          status: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string
+          fulfillment_model?: string
+          id: string
+          image_key: string
+          is_demo?: boolean
+          name: string
+          price_paise: number
+          sku: string
+          status?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string
+          fulfillment_model?: string
+          id?: string
+          image_key?: string
+          is_demo?: boolean
+          name?: string
+          price_paise?: number
+          sku?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          phone: string | null
+          preferences: Json
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          id: string
+          phone?: string | null
+          preferences?: Json
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          phone?: string | null
+          preferences?: Json
+        }
+        Relationships: []
+      }
+      supplier_products: {
+        Row: {
+          available: boolean
+          cost_paise: number
+          dispatch_sla_days: number | null
+          id: string
+          product_id: string
+          return_rules: string | null
+          supplier_id: string
+          supplier_sku: string
+        }
+        Insert: {
+          available?: boolean
+          cost_paise: number
+          dispatch_sla_days?: number | null
+          id?: string
+          product_id: string
+          return_rules?: string | null
+          supplier_id: string
+          supplier_sku: string
+        }
+        Update: {
+          available?: boolean
+          cost_paise?: number
+          dispatch_sla_days?: number | null
+          id?: string
+          product_id?: string
+          return_rules?: string | null
+          supplier_id?: string
+          supplier_sku?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          approved: boolean
+          contact_email: string | null
+          created_at: string
+          id: string
+          manual_fulfillment: boolean
+          name: string
+        }
+        Insert: {
+          approved?: boolean
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          manual_fulfillment?: boolean
+          name: string
+        }
+        Update: {
+          approved?: boolean
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          manual_fulfillment?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          status: string
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          status?: string
+          subject: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          status?: string
+          subject?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlist: {
+        Row: {
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      staff_has_role: { Args: { allowed: string[] }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
