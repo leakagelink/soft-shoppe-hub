@@ -25,6 +25,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as WishlistRouteImport } from './routes/wishlist'
+import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 
@@ -108,6 +109,11 @@ const WishlistRoute = WishlistRouteImport.update({
   path: '/wishlist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderIdRoute = OrderIdRouteImport.update({
+  id: '/order/$id',
+  path: '/order/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductSlugRoute = ProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
   '/wishlist': typeof WishlistRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
 }
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
   '/wishlist': typeof WishlistRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
 }
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
   '/wishlist': typeof WishlistRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
 }
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/support'
     | '/wishlist'
+    | '/order/$id'
     | '/product/$slug'
     | '/api/public/razorpay-webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/support'
     | '/wishlist'
+    | '/order/$id'
     | '/product/$slug'
     | '/api/public/razorpay-webhook'
   id:
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/support'
     | '/wishlist'
+    | '/order/$id'
     | '/product/$slug'
     | '/api/public/razorpay-webhook'
   fileRoutesById: FileRoutesById
@@ -261,6 +273,7 @@ export interface RootRouteChildren {
   ShopRoute: typeof ShopRoute
   SupportRoute: typeof SupportRoute
   WishlistRoute: typeof WishlistRoute
+  OrderIdRoute: typeof OrderIdRoute
   ProductSlugRoute: typeof ProductSlugRoute
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
 }
@@ -379,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WishlistRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/$id': {
+      id: '/order/$id'
+      path: '/order/$id'
+      fullPath: '/order/$id'
+      preLoaderRoute: typeof OrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$slug': {
       id: '/product/$slug'
       path: '/product/$slug'
@@ -413,6 +433,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShopRoute: ShopRoute,
   SupportRoute: SupportRoute,
   WishlistRoute: WishlistRoute,
+  OrderIdRoute: OrderIdRoute,
   ProductSlugRoute: ProductSlugRoute,
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
 }
