@@ -7,7 +7,7 @@ describe.skipIf(!connectionString)('Rolled-back COD transactions',()=>{
  it('quotes COD, applies coupon, commits stock once, denies over-selling and protects unpaid collection',async()=>{
   const db=new Client({connectionString,ssl:{rejectUnauthorized:false}});await db.connect();
   try{await db.query('BEGIN');
-   const user=await db.query('SELECT id FROM auth.users LIMIT 1');const uid=user.rows[0]?.id;if(!uid)throw new Error('One account is required for transaction tests');
+   const uid=randomUUID();await db.query("INSERT INTO auth.users(id,email) VALUES($1,$2)",[uid,`cod-test-${uid}@example.invalid`]);
    await db.query("SELECT set_config('request.jwt.claim.sub',$1,true)",[uid]);
    const product=`test-${randomUUID()}`;const pin='999991';
    await db.query("INSERT INTO public.products(id,name,sku,price_paise,image_key,status,is_demo,tax_bps,tax_inclusive) VALUES($1,'COD test item',$1,10000,'lamp','active',false,1800,false)",[product]);
