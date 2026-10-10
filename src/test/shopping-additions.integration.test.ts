@@ -9,7 +9,7 @@ describe.skipIf(!url||!key||!publicKey)('Shopping options and restock security',
   const admin=createClient(url,key,{auth:{persistSession:false}});const ids:string[]=[];const products=['test-'+randomUUID(),'test-'+randomUUID()];const family='test-'+randomUUID();const clients=[];
   const required=<T extends {data:unknown;error:unknown}>(r:T):NonNullable<T['data']>=>{if(r.error)throw new Error('Fixture operation failed');return r.data as NonNullable<T['data']>};
   try{
-   for(let i=0;i<2;i++){const email=`shopping-${randomUUID()}@example.invalid`;const password=randomUUID()+randomUUID();const u=required(await admin.auth.admin.createUser({email,password,email_confirm:true}));ids.push(u.user.id);const db=createClient(url,publicKey,{auth:{persistSession:false}});required(await db.auth.signInWithPassword({email,password}));clients.push(db)}
+   for(let i=0;i<2;i++){const email=`shopping-${randomUUID()}@example.invalid`;const password=randomUUID()+randomUUID();const u=required(await admin.auth.admin.createUser({email,password,email_confirm:true}));if(!u.user)throw new Error('Test user missing');ids.push(u.user.id);const db=createClient(url,publicKey,{auth:{persistSession:false}});required(await db.auth.signInWithPassword({email,password}));clients.push(db)}
    const [a,b]=clients;const [small,large]=products;if(!a||!b||!small||!large||!ids[0])throw new Error('Fixtures missing');
    required(await admin.from('products').insert([{id:small,name:'Test tee M Blue',sku:small,price_paise:10000,image_key:'tote',status:'active',is_demo:false,tax_bps:0,tax_inclusive:true,family_key:family,option_name:'M · Blue'},{id:large,name:'Test tee L Blue',sku:large,price_paise:14000,image_key:'tote',status:'active',is_demo:false,tax_bps:0,tax_inclusive:true,family_key:family,option_name:'L · Blue'}]));
    required(await admin.from('inventory').insert([{product_id:small,quantity:0,reserved:0},{product_id:large,quantity:2,reserved:0}]));
@@ -24,7 +24,7 @@ describe.skipIf(!url||!key||!publicKey)('Shopping options and restock security',
    required(await admin.from('inventory').update({quantity:2}).eq('product_id',small));
    expect(required(await a.from('notifications').select('id').eq('user_id',ids[0]).eq('title','Back in stock'))).toHaveLength(1);
    expect(required(await b.from('notifications').select('id').eq('user_id',ids[0]))).toEqual([]);
-   expect(required(await a.from('products').select('id,price_paise,option_name').eq('family_key',family))).toHaveLength(2);
+   const options=required(await a.from('products').select('id,price_paise,option_name').eq('family_key',family));expect(options.find((p:{id:string})=>p.id===small)).toMatchObject({price_paise:10000,option_name:'M · Blue'});expect(options.find((p:{id:string})=>p.id===large)).toMatchObject({price_paise:14000,option_name:'L · Blue'});
   }finally{
    for(const uid of ids){await admin.from('notifications').delete().eq('user_id',uid);await admin.from('restock_subscriptions').delete().eq('user_id',uid);await admin.auth.admin.deleteUser(uid)}
    await admin.from('inventory').delete().in('product_id',products);await admin.from('products').delete().in('id',products);

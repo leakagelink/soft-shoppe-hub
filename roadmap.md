@@ -1,20 +1,21 @@
 # Commerce V1 roadmap
-- [ ] Add SKU-based size/colour choices with independent price and stock, and current-stock reorder
-- [ ] Add Hindi/English shopping language, owner-scoped restock notifications and configurable WhatsApp support
-- [ ] Verify new shopping flows and photo uploads; real business number and policies await merchant input
+- [x] Add SKU-based size/colour choices with independent price and stock, and current-stock reorder
+- [x] Add Hindi/English main shopping controls, owner-scoped in-app restock notifications and configurable WhatsApp support
+- [x] Verify shopping options, stock alerts, owner reorder and authenticated photo upload/delete in the browser; 37 automated checks passed, one optional direct-DB test skipped
+- [ ] Activate WhatsApp and final delivery/return policies — blocked by real merchant number and approved policy details
 - [x] Show an animated sticky bag after adding products, with count, subtotal and bag navigation
 - [x] Add shopping entry animations, staggered reveals, photo/card effects and button feedback with reduced-motion support
-- [ ] Finish remaining V1 work: variant-aware purchasing, authenticated upload verification, supplier costs, SEO/consent analytics and backup rehearsal remain outstanding
+- [ ] Finish remaining V1 work: supplier costs, SEO/consent analytics and backup rehearsal remain outstanding
 - [x] COD-only checkout with authoritative totals, stock deduction, idempotency, staff collection evidence and cancellation accounting
 - [x] Private photo uploads and product galleries with expiring catalogue-authorized signed links
 - [x] Automatic supplier-task allocation and manual acknowledgement/failure/retry/dispatch controls
 - [x] Full-order COD return/refund recording, owner-authorized PDF receipts and account deletion implementation
 - [x] Basic backend security scan, dependency scan, 24 tests and public desktop/mobile COD checks
-- [x] Signed-in customer/staff, cross-customer, COD collection/refund, deletion and stock concurrency verified with isolated fixture accounts; authenticated photo upload end-to-end verification remains outstanding
+- [x] Signed-in customer/staff, cross-customer, COD collection/refund, deletion and stock concurrency verified with isolated fixture accounts; authenticated photo upload/delete verified
 - [ ] External supplier automation and synchronization — blocked by supplier specifications and tested adapters
 - [ ] Verified GST invoices — blocked by seller registration details and tax-professional review; order receipts implemented instead
 - [ ] Live activation — blocked by approved non-demo catalogue, verified shipping/tax rules, staff assignment, operating/legal policies and remaining authenticated checks
-- [ ] Original V1 remaining: variant-aware purchasing, supplier cost reporting, production SEO/consent analytics and backup/restore rehearsal — blocked by approved content, business/provider configuration and isolated verification
+- [ ] Original V1 remaining: supplier cost reporting, production SEO/consent analytics and backup/restore rehearsal — blocked by approved content, business/provider configuration and isolated verification
 - [x] Verified-purchase reviews, order notifications, live collections, supplier task performance reporting and offline feedback
 - [x] Photo upload UI now uses the role-gated validated upload function, not denied direct storage uploads
 - [x] Online payments deferred by user: all current new orders use COD; no successful online payment integration is claimed
