@@ -7,7 +7,7 @@ describe.skipIf(!url||!key||!publicKey)('Isolated COD customer and staff flows',
  it('prevents overselling, isolates customers, collects and refunds COD, and anonymizes deletion',async()=>{
   if(!url||!key||!publicKey)throw new Error('Test configuration unavailable');
   const admin=createClient(url,key,{auth:{persistSession:false}});const users:string[]=[];const orders:string[]=[];const product='test-'+randomUUID();const pin='999992';let shippingId:string|undefined;
-  const required=<T>(r:{data:T;error:unknown})=>{if(r.error)throw new Error('Fixture operation failed');return r.data};
+  const required=<T>(r:{data:T|null;error:unknown}):NonNullable<T>=>{if(r.error||r.data==null)throw new Error('Fixture operation failed');return r.data as NonNullable<T>};
   const clients=[];
   try{
    for(let i=0;i<3;i++){const password=randomUUID()+randomUUID();const email=`commerce-${randomUUID()}@example.invalid`;const created=required(await admin.auth.admin.createUser({email,password,email_confirm:true}));if(!created.user)throw new Error('Test account missing');users.push(created.user.id);const client=createClient(url,publicKey,{auth:{persistSession:false}});required(await client.auth.signInWithPassword({email,password}));clients.push(client)}
@@ -45,7 +45,7 @@ describe.skipIf(!url||!key||!publicKey)('Isolated COD customer and staff flows',
    expect(required(await admin.from('orders').select('status').eq('id',id).single()).status).toBe('refunded');
    expect((await winner.rpc('prepare_account_deletion')).error).toBeNull();
    expect(required(await admin.from('orders').select('user_id,address_snapshot,total_paise').eq('id',id).single())).toEqual({user_id:null,address_snapshot:{deleted:true},total_paise:12800});
-   expect((await admin.auth.admin.deleteUser(users[winningIndex])).error).toBeNull();
+   expect((await admin.auth.admin.deleteUser(users[winningIndex]??'')).error).toBeNull();
   }finally{
    // Remove only exact fixture IDs, in reverse foreign-key order. No business rows are touched.
    if(orders.length){await admin.from('reviews').delete().eq('product_id',product);await admin.from('notifications').delete().in('order_id',orders);const fs=await admin.from('fulfillments').select('id').in('order_id',orders);if(fs.data?.length)await admin.from('supplier_tasks').delete().in('fulfillment_id',fs.data.map(f=>f.id));await admin.from('refunds').delete().in('order_id',orders);await admin.from('order_requests').delete().in('order_id',orders);await admin.from('fulfillments').delete().in('order_id',orders);await admin.from('order_items').delete().in('order_id',orders);await admin.from('orders').delete().in('id',orders)}

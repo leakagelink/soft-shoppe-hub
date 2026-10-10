@@ -23,3 +23,5 @@
 - Supplier tasks are allocated transactionally with COD orders and advanced by controlled staff RPCs; never submit external supplier orders without a tested adapter.
 - Customer account deletion scrubs personal records and deactivates Auth only after active commerce obligations are resolved; financial order history remains anonymized.
 - Order PDFs are owner-authorized receipts until seller tax registration and invoice requirements are verified; never label unverified documents as GST tax invoices.
+
+- Supplier operational reporting derives task counts from authorized staff data and labels its sample window; it does not imply revenue or profit.
