@@ -1,4 +1,5 @@
 # Commerce V1 roadmap
+- [x] Add shopping entry animations, staggered reveals, photo/card effects and button feedback with reduced-motion support
 - [ ] Finish remaining V1 work: variant-aware purchasing, authenticated upload verification, supplier costs, SEO/consent analytics and backup rehearsal remain outstanding
 - [x] COD-only checkout with authoritative totals, stock deduction, idempotency, staff collection evidence and cancellation accounting
 - [x] Private photo uploads and product galleries with expiring catalogue-authorized signed links

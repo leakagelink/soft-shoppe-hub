@@ -25,3 +25,4 @@
 - Order PDFs are owner-authorized receipts until seller tax registration and invoice requirements are verified; never label unverified documents as GST tax invoices.
 
 - Supplier operational reporting derives task counts from authorized staff data and labels its sample window; it does not imply revenue or profit.
+- Shopping motion uses a shared progressive-enhancement observer and CSS transitions; content remains visible without JavaScript and reduced-motion preferences disable effects.
