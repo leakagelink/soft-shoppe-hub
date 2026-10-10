@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS staff_photo_insert ON storage.objects;
+COMMENT ON TABLE public.product_images IS 'Private product media metadata; uploads go through authenticated role-validated server function with size/type/signature checks.';

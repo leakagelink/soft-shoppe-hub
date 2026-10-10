@@ -2,12 +2,16 @@
 import {describe,it,expect} from 'vitest';
 import {Client} from 'pg';
 import {randomUUID} from 'node:crypto';
-const connectionString=process.env['SUPABASE_DB_URL'];
-describe.skipIf(!connectionString)('Rolled-back COD transactions',()=>{
+import {createClient} from '@supabase/supabase-js';
+// Requires an isolated database with a privileged test connection; production credentials must not be used.
+const connectionString=process.env['COD_TEST_DATABASE_URL'];
+const url=process.env['SUPABASE_URL'];const adminKey=process.env['SUPABASE_SERVICE_ROLE_KEY'];
+describe.skipIf(!connectionString||!url||!adminKey)('Rolled-back COD transactions',()=>{
  it('quotes COD, applies coupon, commits stock once, denies over-selling and protects unpaid collection',async()=>{
+  if(!url||!adminKey)throw new Error('Test configuration unavailable');
+  const admin=createClient(url,adminKey,{auth:{persistSession:false}});const created=await admin.auth.admin.createUser({email:`cod-test-${randomUUID()}@example.invalid`,password:randomUUID()+randomUUID(),email_confirm:true});const uid=created.data.user?.id;if(!uid)throw new Error('Isolated test account could not be created');
   const db=new Client({connectionString,ssl:{rejectUnauthorized:false}});await db.connect();
   try{await db.query('BEGIN');
-   const user=await db.query('SELECT id FROM auth.users LIMIT 1');const uid=user.rows[0]?.id;if(!uid)throw new Error('One account is required for transaction tests');
    await db.query("SELECT set_config('request.jwt.claim.sub',$1,true)",[uid]);
    const product=`test-${randomUUID()}`;const pin='999991';
    await db.query("INSERT INTO public.products(id,name,sku,price_paise,image_key,status,is_demo,tax_bps,tax_inclusive) VALUES($1,'COD test item',$1,10000,'lamp','active',false,1800,false)",[product]);
@@ -26,6 +30,6 @@ describe.skipIf(!connectionString)('Rolled-back COD transactions',()=>{
    const exhausted=await db.query('SELECT public.quote_cod_order($1::jsonb,$2,\'\') AS q',[items,pin]);expect(exhausted.rows[0].q.purchasingEnabled).toBe(false);
    await db.query('SAVEPOINT denied');let denied=false;try{await db.query('SELECT public.place_cod_order($1::jsonb,$2::jsonb,\'\',$3,12800)',[address,items,randomUUID()])}catch{denied=true;await db.query('ROLLBACK TO SAVEPOINT denied')}expect(denied).toBe(true);
    await db.query('SAVEPOINT collection');denied=false;try{await db.query("SELECT public.collect_cod($1,11620,'test-collection')",[id])}catch{denied=true;await db.query('ROLLBACK TO SAVEPOINT collection')}expect(denied).toBe(true);
-  }finally{await db.query('ROLLBACK');await db.end()}
+  }finally{await db.query('ROLLBACK');await db.end();await admin.auth.admin.deleteUser(uid)}
  },20000);
 });

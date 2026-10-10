@@ -9,7 +9,8 @@ export const uploadProductPhoto=createServerFn({method:'POST'}).middleware([requ
  if(!valid)throw new Error('Unsupported image contents');
  const product=await context.supabase.from('products').select('id').eq('id',data.productId).single();if(product.error)throw new Error('Product unavailable');
  const path=`${data.productId}/${crypto.randomUUID()}.${data.type==='image/jpeg'?'jpg':data.type==='image/png'?'png':'webp'}`;
- const uploaded=await context.supabase.storage.from('product-images').upload(path,bytes,{contentType:data.type,upsert:false});if(uploaded.error)throw new Error('Image upload failed');
- const inserted=await context.supabase.from('product_images').insert({product_id:data.productId,object_path:path,sort_order:Date.now()%2147483647});if(inserted.error){await context.supabase.storage.from('product-images').remove([path]);throw new Error('Image could not be linked to product')}
+ const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
+ const uploaded=await supabaseAdmin.storage.from('product-images').upload(path,bytes,{contentType:data.type,upsert:false});if(uploaded.error)throw new Error('Image upload failed');
+ const inserted=await context.supabase.from('product_images').insert({product_id:data.productId,object_path:path,sort_order:Date.now()%2147483647});if(inserted.error){await supabaseAdmin.storage.from('product-images').remove([path]);throw new Error('Image could not be linked to product')}
  return {ok:true};
 });

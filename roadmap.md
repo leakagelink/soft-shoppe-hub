@@ -1,21 +1,12 @@
 # Commerce V1 roadmap
-- [ ] Switch new orders to server-validated COD only with collection, cancellation and inventory accounting
-- [ ] Implement private photo uploads and product galleries
-- [ ] Implement automatic supplier task allocation, retries and manual fulfillment queue
-- [ ] Implement COD refund records, downloadable receipts and executable account deletion
-- [ ] Run security scans, access checks and commerce transaction tests
-- [x] Reference-led storefront and core customer shopping screens
-- [x] Cloud catalogue, customer profile/account flows and private-record policies (authenticated end-to-end verification remains outstanding)
-- [x] Server-verified preview subtotal and safe blocked checkout boundary
-- [x] Foundational supplier/inventory schema and protected staff reads/limited edits
-- [x] Six critical rule tests and public shopping/mobile verification; launch gaps documented
-- [x] Add transactional reservation/capture primitives, signature-verified payment boundary and coupon/shipping/tax configuration (live checkout remains disabled)
-- [x] Add staff catalogue/inventory/supplier operations, fulfillment, audit history and customer order requests
-- [x] Verify 18 tests, public desktop/mobile checkout and access boundaries; document remaining V1 gaps
-- [ ] Authenticated customer/staff and concurrency verification — blocked by a signed-in test account and isolated commerce fixtures
-- [ ] Complete gateway ordering, discounted final totals, pending/failed reconciliation and refunds — blocked by gateway credentials and merchant-approved rules
-- [ ] Product image upload activation — blocked by Cloud storage access configuration
-- [ ] Supplier automation/performance and failure/retry handling — blocked by supplier specifications and tested adapters
-- [ ] Real reviews, notifications, campaign content, invoices and deletion/retention execution — blocked by approved merchant content and operating/legal rules; these workflows are not implemented
-- [ ] Production SEO/consent analytics and backup/restore rehearsal — blocked by published domain, approved consent policy and confirmed backup capability
-- [ ] Live activation — blocked by verified merchant catalogue, Indian gateway credentials, shipping/tax configuration and supplier agreements
+- [x] COD-only checkout with authoritative totals, stock deduction, idempotency, staff collection evidence and cancellation accounting
+- [x] Private photo uploads and product galleries with expiring catalogue-authorized signed links
+- [x] Automatic supplier-task allocation and manual acknowledgement/failure/retry/dispatch controls
+- [x] Full-order COD return/refund recording, owner-authorized PDF receipts and account deletion implementation
+- [x] Basic backend security scan, dependency scan, 24 tests and public desktop/mobile COD checks
+- [ ] Signed-in customer/staff, cross-customer, upload, deletion and stock concurrency verification — blocked by an isolated authorized test environment; transactional test retained but skipped
+- [ ] External supplier automation and synchronization — blocked by supplier specifications and tested adapters
+- [ ] Verified GST invoices — blocked by seller registration details and tax-professional review; order receipts implemented instead
+- [ ] Live activation — blocked by approved non-demo catalogue, verified shipping/tax rules, staff assignment, operating/legal policies and remaining authenticated checks
+- [ ] Original V1 remaining: variant-aware purchasing, real reviews/notifications, campaign content, supplier cost/performance reporting, production SEO/consent analytics and backup/restore rehearsal — blocked by approved content, business/provider configuration and isolated verification
+- [x] Online payments deferred by user: all current new orders use COD; no successful online payment integration is claimed
