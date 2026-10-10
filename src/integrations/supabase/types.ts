@@ -1046,6 +1046,7 @@ export type Database = {
         Args: { _id: string; _note: string; _status: string }
         Returns: undefined
       }
+      scrub_retained_requests: { Args: never; Returns: undefined }
       staff_has_role: { Args: { allowed: string[] }; Returns: boolean }
       update_fulfillment: {
         Args: {

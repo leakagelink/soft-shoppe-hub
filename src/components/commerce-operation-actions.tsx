@@ -1,0 +1,13 @@
+import {useState} from 'react';
+import {supabase} from '@/integrations/supabase/client';
+import {Button} from '@/components/ui/button';
+import {toast} from 'sonner';
+export function CommerceOperationActions({kind,record,onSaved}:{kind:string;record:Record<string,unknown>;onSaved:()=>void}){
+ const [busy,setBusy]=useState(false);
+ const eligible=kind==='orders'?record['payment_method']==='COD'&&record['status']==='delivered'&&record['payment_status']!=='paid':kind==='refunds'?record['status']==='pending':kind==='tasks'?!['completed','cancelled'].includes(String(record['status'])):kind==='requests'?record['status']==='approved':false;
+ if(!eligible)return null;
+ return <form className="mt-3 min-w-64 space-y-2" onSubmit={async e=>{e.preventDefault();setBusy(true);const f=new FormData(e.currentTarget);const note=String(f.get('note'));const id=String(record['id']);try{let result;if(kind==='orders')result=await supabase.rpc('collect_cod',{_order:id,_amount:Number(record['total_paise']),_reference:note});else if(kind==='refunds')result=await supabase.rpc('complete_cod_refund',{_id:id,_reference:note});else if(kind==='tasks')result=await supabase.rpc('update_supplier_task',{_id:id,_action:String(f.get('action')),_note:note});else result=await supabase.rpc('complete_cod_request',{_request:id,_note:note});if(result.error)throw new Error('Action denied. Check your role, order state and evidence.');toast.success('Operation recorded');onSaved()}catch(err){toast.error(err instanceof Error?err.message:'Operation failed')}finally{setBusy(false)}}}>
+ {kind==='tasks'&&<select name="action" className="store-input" aria-label="Supplier task action"><option value="acknowledged">Supplier acknowledged</option><option value="failed">Record failure</option>{record['status']==='failed'&&<option value="retry">Requeue retry</option>}</select>}
+ <input name="note" required minLength={5} maxLength={kind==='orders'||kind==='refunds'?150:1000} className="store-input" aria-label="Operation evidence" placeholder={kind==='orders'?'Exact cash collection reference':kind==='refunds'?'Completed bank transfer reference':kind==='requests'?'Cancellation / received-return evidence':'Supplier response / failure reason'}/><Button disabled={busy} type="submit">{kind==='orders'?'Record cash collected':kind==='refunds'?'Record refund transferred':kind==='requests'?'Complete approved request':'Update supplier task'}</Button>
+ </form>;
+}
