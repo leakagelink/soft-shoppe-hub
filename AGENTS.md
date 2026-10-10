@@ -26,3 +26,4 @@
 
 - Supplier operational reporting derives task counts from authorized staff data and labels its sample window; it does not imply revenue or profit.
 - Shopping motion uses a shared progressive-enhancement observer and CSS transitions; content remains visible without JavaScript and reduced-motion preferences disable effects.
+- The shared sticky bag derives its item count and indicative subtotal from the existing cart; checkout remains authoritative and mobile placement clears bottom navigation.
