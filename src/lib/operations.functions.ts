@@ -1,0 +1,42 @@
+import {createServerFn} from '@tanstack/react-start';
+import {z} from 'zod';
+import {requireSupabaseAuth} from '@/integrations/supabase/auth-middleware';
+
+export const operationsData=createServerFn({method:'GET'}).middleware([requireSupabaseAuth]).handler(async({context})=>{
+  const {data:allowed,error}=await context.supabase.rpc('staff_has_role',{allowed:['owner','admin','operations','support','catalogue']});
+  if(error||!allowed)throw new Error('Staff access required');
+  const db=context.supabase;
+  const [products,categories,suppliers,mappings,inventory,orders,fulfillments,requests,tickets,shipping,coupons,audit,movements,deletions]=await Promise.all([
+    db.from('products').select('*'),db.from('categories').select('*').order('sort_order'),db.from('suppliers').select('*'),db.from('supplier_products').select('*'),db.from('inventory').select('*'),db.from('orders').select('*').order('created_at',{ascending:false}).limit(100),db.from('fulfillments').select('*').limit(100),db.from('order_requests').select('*').limit(100),db.from('support_tickets').select('*').limit(100),db.from('shipping_rules').select('*'),db.from('coupons').select('*'),db.from('audit_logs').select('*').order('created_at',{ascending:false}).limit(100),db.from('inventory_movements').select('*').order('created_at',{ascending:false}).limit(100),db.from('account_deletion_requests').select('*')]);
+  return {products:products.data??[],categories:categories.data??[],suppliers:suppliers.data??[],mappings:mappings.data??[],inventory:inventory.data??[],orders:orders.data??[],fulfillments:fulfillments.data??[],requests:requests.data??[],tickets:tickets.data??[],shipping:shipping.data??[],coupons:coupons.data??[],audit:audit.data??[],movements:movements.data??[],deletions:deletions.data??[]};
+});
+const key=z.string().regex(/^[a-z0-9-]{1,100}$/);
+const product=z.object({id:key,name:z.string().trim().min(2).max(150),sku:z.string().trim().min(1).max(100),description:z.string().max(5000),category_id:z.string().min(1),price_paise:z.number().int().positive().max(100000000),image_key:z.enum(['headphones','lamp','tote','bottle','organizer','notebooks']),status:z.enum(['draft','active','archived']),fulfillment_model:z.enum(['OWN_INVENTORY','DROPSHIP']),is_demo:z.boolean(),tax_bps:z.number().int().min(0).max(10000).nullable(),tax_inclusive:z.boolean(),return_days:z.number().int().min(0).max(365)});
+const category=z.object({id:key,name:z.string().min(2).max(100),image_key:z.enum(['headphones','lamp','tote','bottle','organizer','notebooks']),active:z.boolean(),sort_order:z.number().int().min(0).max(1000)});
+const supplier=z.object({id:z.string().uuid().optional(),name:z.string().min(2).max(150),contact_email:z.string().email(),approved:z.boolean(),manual_fulfillment:z.literal(true)});
+const shipping=z.object({id:z.string().uuid().optional(),pincode:z.string().regex(/^[1-9]\d{5}$/),fee_paise:z.number().int().min(0),min_days:z.number().int().min(0),max_days:z.number().int().min(0),active:z.boolean(),cod_enabled:z.literal(false)}).refine(v=>v.max_days>=v.min_days,'Maximum delivery days must be at least the minimum');
+const coupon=z.object({id:z.string().uuid().optional(),code:z.string().regex(/^[A-Z0-9_-]{2,40}$/),percent:z.number().int().min(1).max(100),min_subtotal_paise:z.number().int().min(0),max_discount_paise:z.number().int().positive(),starts_at:z.string().datetime(),ends_at:z.string().datetime(),active:z.boolean()}).refine(v=>v.ends_at>v.starts_at,'Campaign end must follow its start');
+const mapping=z.object({id:z.string().uuid().optional(),supplier_id:z.string().uuid(),product_id:key,supplier_sku:z.string().min(1).max(100),cost_paise:z.number().int().min(0),available:z.boolean(),dispatch_sla_days:z.number().int().min(0).max(365),return_rules:z.string().max(2000)});
+export const saveOperation=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((input)=>z.discriminatedUnion('kind',[
+  z.object({kind:z.literal('products'),record:product}),z.object({kind:z.literal('categories'),record:category}),z.object({kind:z.literal('suppliers'),record:supplier}),z.object({kind:z.literal('shipping'),record:shipping}),z.object({kind:z.literal('coupons'),record:coupon}),z.object({kind:z.literal('mappings'),record:mapping})]).parse(input)).handler(async({data,context})=>{
+  const roles=data.kind==='suppliers'||data.kind==='mappings'||data.kind==='shipping'?['owner','admin','operations']:['owner','admin','catalogue'];
+  const check=await context.supabase.rpc('staff_has_role',{allowed:roles});if(check.error||!check.data)throw new Error('This action requires a different staff role');
+  let error;
+  switch(data.kind){
+    case 'products':({error}=await context.supabase.from('products').upsert(data.record));break;
+    case 'categories':({error}=await context.supabase.from('categories').upsert(data.record));break;
+    case 'suppliers':({error}=await context.supabase.from('suppliers').upsert(data.record));break;
+    case 'shipping':({error}=await context.supabase.from('shipping_rules').upsert(data.record,{onConflict:'pincode'}));break;
+    case 'coupons':({error}=await context.supabase.from('coupons').upsert(data.record,{onConflict:'code'}));break;
+    case 'mappings':({error}=await context.supabase.from('supplier_products').upsert(data.record));break;
+  }
+  if(error)throw new Error('Could not save this record. Check unique identifiers and permissions.');return {ok:true};
+});
+export const adjustStock=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((input)=>z.object({product:z.string().min(1),delta:z.number().int().min(-100000).max(100000),reason:z.string().trim().min(3).max(500)}).parse(input)).handler(async({data,context})=>{const {error}=await context.supabase.rpc('adjust_inventory',{_product:data.product,_delta:data.delta,_reason:data.reason});if(error)throw new Error('Stock adjustment denied: check available stock and your role');return {ok:true};});
+export const moveFulfillment=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((input)=>z.object({id:z.string().uuid(),status:z.enum(['shipped','out_for_delivery','delivered']),carrier:z.string().max(100),tracking:z.string().max(150),url:z.union([z.literal(''),z.string().url().startsWith('https://')])}).parse(input)).handler(async({data,context})=>{const {error}=await context.supabase.rpc('update_fulfillment',{_id:data.id,_status:data.status,_carrier:data.carrier,_tracking:data.tracking,_url:data.url});if(error)throw new Error('Transition denied. Check payment, current shipment state and tracking details.');return {ok:true};});
+export const requestOrderAction=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((input)=>z.object({order:z.string().uuid(),kind:z.enum(['cancellation','return']),reason:z.string().trim().min(5).max(1000)}).parse(input)).handler(async({data,context})=>{const {error}=await context.supabase.rpc('request_order_action',{_order:data.order,_kind:data.kind,_reason:data.reason});if(error)throw new Error('Request unavailable, already submitted, or outside the eligible window');return {ok:true};});
+export const getOrderDetail=createServerFn({method:'GET'}).middleware([requireSupabaseAuth]).inputValidator((input)=>z.object({id:z.string().uuid()}).parse(input)).handler(async({data,context})=>{
+  const db=context.supabase;const order=await db.from('orders').select('*').eq('id',data.id).eq('user_id',context.userId).single();if(order.error)throw new Error('Order unavailable');
+  const [items,fulfillments,requests]=await Promise.all([db.from('order_items').select('*').eq('order_id',data.id),db.from('fulfillments').select('id,item_id,status,carrier,tracking_number,tracking_url,updated_at').eq('order_id',data.id),db.from('order_requests').select('*').eq('order_id',data.id)]);
+  if(items.error||fulfillments.error||requests.error)throw new Error('Order details could not be loaded');return {order:order.data,items:items.data??[],fulfillments:fulfillments.data??[],requests:requests.data??[]};
+});
