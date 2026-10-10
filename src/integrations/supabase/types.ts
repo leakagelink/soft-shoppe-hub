@@ -855,11 +855,35 @@ export type Database = {
         Args: { _delta: number; _product: string; _reason: string }
         Returns: undefined
       }
+      record_captured_payment: {
+        Args: {
+          _amount: number
+          _event: string
+          _payment: string
+          _provider_order: string
+        }
+        Returns: undefined
+      }
+      release_unpaid_order: { Args: { _order: string }; Returns: undefined }
       request_order_action: {
         Args: { _kind: string; _order: string; _reason: string }
         Returns: string
       }
+      reserve_customer_order: {
+        Args: { _address: string; _items: Json; _key: string; _user: string }
+        Returns: string
+      }
       staff_has_role: { Args: { allowed: string[] }; Returns: boolean }
+      update_fulfillment: {
+        Args: {
+          _carrier: string
+          _id: string
+          _status: string
+          _tracking: string
+          _url: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
