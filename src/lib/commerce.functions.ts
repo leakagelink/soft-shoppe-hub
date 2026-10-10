@@ -21,7 +21,9 @@ export const getCatalogue = createServerFn({ method: 'GET' }).handler(async () =
   if((images.data??[]).length&&signed.error)throw new Error('Product photos are temporarily unavailable');
   const browserOrigin=process.env['VITE_SUPABASE_URL']??url;
   const photos=(images.data??[]).map((image,index)=>({productId:image.product_id,url:signed.data?.[index]?.signedUrl?.replace(url,browserOrigin)}));
-  return { products:(products.data??[]).map(p=>({...p,photos:photos.filter(i=>i.productId===p.id&&i.url).map(i=>i.url).filter((u):u is string=>typeof u==='string')})), categories: categories.data ?? [],reviews:reviews.data??[],campaigns:campaigns.data??[] };
+  const [availability,contacts]=await Promise.all([db.rpc('shopping_availability'),db.from('store_contacts').select('whatsapp_number').eq('id','store').maybeSingle()]);
+  if(availability.error||contacts.error)throw new Error('Shopping options could not be loaded.');
+  return { products:(products.data??[]).map(p=>({...p,available_quantity:availability.data?.find(a=>a.product_id===p.id)?.available_quantity??0,photos:photos.filter(i=>i.productId===p.id&&i.url).map(i=>i.url).filter((u):u is string=>typeof u==='string')})), categories: categories.data ?? [],reviews:reviews.data??[],campaigns:campaigns.data??[],whatsappNumber:contacts.data?.whatsapp_number??'' };
 });
 export const quoteCart = createServerFn({ method: 'POST' }).inputValidator((input) => z.object({ items: cartSchema, coupon: z.string().trim().max(50).default('') }).parse(input)).handler(async ({ data }) => {
   const url = process.env['SUPABASE_URL']; const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
