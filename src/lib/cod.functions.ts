@@ -16,6 +16,7 @@ export const placeCodOrder=createServerFn({method:'POST'}).middleware([requireSu
 });
 export const deleteCustomerAccount=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((input)=>z.object({confirmation:z.literal('DELETE')}).parse(input)).handler(async({context})=>{
  const prepared=await context.supabase.rpc('prepare_account_deletion');if(prepared.error)throw new Error('Resolve active orders, COD collections, refunds or requests before deleting your account. Staff accounts require an administrator.');
+ const scrubbed=await context.supabase.rpc('scrub_retained_requests');if(scrubbed.error)throw new Error('Retained request details could not be cleared. Please retry deletion.');
  const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
  const result=await supabaseAdmin.auth.admin.deleteUser(context.userId,true);if(result.error)throw new Error('Account deletion could not finish. Your personal profile was cleared; please retry or contact support.');
  return {ok:true};
