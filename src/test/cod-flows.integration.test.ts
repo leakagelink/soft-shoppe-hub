@@ -36,6 +36,13 @@ describe.skipIf(!url||!key||!publicKey)('Isolated COD customer and staff flows',
    expect((await loser.from('reviews').insert({user_id:users[1-winningIndex],product_id:product,order_item_id:item.id,rating:5,body:'Not my purchase'})).error).not.toBeNull();
    required(await winner.from('reviews').insert({user_id:users[winningIndex],product_id:product,order_item_id:item.id,rating:4,body:'Isolated verified review'}));
    expect((await winner.from('reviews').insert({user_id:users[winningIndex],product_id:product,order_item_id:item.id,rating:5,body:'Duplicate review'})).error).not.toBeNull();
+   const request=required(await winner.rpc('request_order_action',{_order:id,_kind:'return',_reason:'Full order return test'}));
+   required(await staff.rpc('review_order_request',{_id:request,_status:'approved',_note:'Return inspected and approved'}));
+   expect((await winner.rpc('prepare_account_deletion')).error).not.toBeNull();
+   required(await staff.rpc('complete_cod_request',{_request:request,_note:'Entire order received back'}));
+   const refund=required(await admin.from('refunds').select('id,amount_paise').eq('order_id',id).single());expect(refund.amount_paise).toBe(12800);
+   required(await staff.rpc('complete_cod_refund',{_id:refund.id,_reference:'test-transfer-'+randomUUID()}));
+   expect(required(await admin.from('orders').select('status').eq('id',id).single()).status).toBe('refunded');
    expect((await winner.rpc('prepare_account_deletion')).error).toBeNull();
    expect(required(await admin.from('orders').select('user_id,address_snapshot,total_paise').eq('id',id).single())).toEqual({user_id:null,address_snapshot:{deleted:true},total_paise:12800});
    expect((await admin.auth.admin.deleteUser(users[winningIndex])).error).toBeNull();

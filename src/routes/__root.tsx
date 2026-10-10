@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from '@/components/store-context';
 import { StoreHeader, StoreFooter } from '@/components/store-shell';
+import { ConnectivityStatus } from '@/components/connectivity-status';
 import { Toaster } from 'sonner';
 
 function NotFoundComponent() {
@@ -120,7 +121,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider><StoreHeader /><Outlet /><StoreFooter /><Toaster position="bottom-right" richColors /></StoreProvider>
+      <StoreProvider><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><Toaster position="bottom-right" richColors /></StoreProvider>
     </QueryClientProvider>
   );
 }
