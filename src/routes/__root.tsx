@@ -16,6 +16,7 @@ import { StoreProvider } from '@/components/store-context';
 import { StoreHeader, StoreFooter } from '@/components/store-shell';
 import { ConnectivityStatus } from '@/components/connectivity-status';
 import { ShoppingMotion } from '@/components/shopping-motion';
+import { StickyCart } from '@/components/sticky-cart';
 import { Toaster } from 'sonner';
 
 function NotFoundComponent() {
@@ -122,7 +123,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><Toaster position="bottom-right" richColors /></StoreProvider>
+      <StoreProvider><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><StickyCart/><Toaster position="top-right" richColors /></StoreProvider>
     </QueryClientProvider>
   );
 }
