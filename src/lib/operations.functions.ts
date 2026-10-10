@@ -29,7 +29,7 @@ export const saveOperation=createServerFn({method:'POST'}).middleware([requireSu
   switch(data.kind){
     case 'contacts':({error}=await context.supabase.from('store_contacts').upsert(data.record));break;
     case 'campaigns':{const {id,...fields}=data.record;({error}=await context.supabase.from('campaigns').upsert({...fields,...(id?{id}:{})}));break;}
-    case 'products':({error}=await context.supabase.from('products').upsert(data.record));break;
+    case 'products':({error}=await context.supabase.from('products').upsert({...data.record,family_key:data.record.family_key||null,option_name:data.record.option_name||null}));break;
     case 'categories':({error}=await context.supabase.from('categories').upsert(data.record));break;
     case 'suppliers':{const {id,...fields}=data.record;({error}=await context.supabase.from('suppliers').upsert({...fields,...(id?{id}:{})}));break;}
     case 'shipping':{const {id,...fields}=data.record;({error}=await context.supabase.from('shipping_rules').upsert({...fields,...(id?{id}:{})},{onConflict:'pincode'}));break;}
