@@ -700,11 +700,13 @@ export type Database = {
           category_id: string | null
           created_at: string
           description: string
+          family_key: string | null
           fulfillment_model: string
           id: string
           image_key: string
           is_demo: boolean
           name: string
+          option_name: string | null
           price_paise: number
           return_days: number
           sku: string
@@ -716,11 +718,13 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           description?: string
+          family_key?: string | null
           fulfillment_model?: string
           id: string
           image_key: string
           is_demo?: boolean
           name: string
+          option_name?: string | null
           price_paise: number
           return_days?: number
           sku: string
@@ -732,11 +736,13 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           description?: string
+          family_key?: string | null
           fulfillment_model?: string
           id?: string
           image_key?: string
           is_demo?: boolean
           name?: string
+          option_name?: string | null
           price_paise?: number
           return_days?: number
           sku?: string
@@ -826,6 +832,42 @@ export type Database = {
           },
         ]
       }
+      restock_subscriptions: {
+        Row: {
+          created_at: string
+          notified_at: string | null
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          notified_at?: string | null
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          notified_at?: string | null
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restock_subscriptions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "restock_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           body: string
@@ -898,6 +940,21 @@ export type Database = {
           max_days?: number
           min_days?: number
           pincode?: string
+        }
+        Relationships: []
+      }
+      store_contacts: {
+        Row: {
+          id: string
+          whatsapp_number: string
+        }
+        Insert: {
+          id?: string
+          whatsapp_number?: string
+        }
+        Update: {
+          id?: string
+          whatsapp_number?: string
         }
         Relationships: []
       }
@@ -1171,6 +1228,13 @@ export type Database = {
         Returns: undefined
       }
       scrub_retained_requests: { Args: never; Returns: undefined }
+      shopping_availability: {
+        Args: never
+        Returns: {
+          available_quantity: number
+          product_id: string
+        }[]
+      }
       staff_has_role: { Args: { allowed: string[] }; Returns: boolean }
       update_fulfillment: {
         Args: {
