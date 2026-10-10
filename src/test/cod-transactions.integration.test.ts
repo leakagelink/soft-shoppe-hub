@@ -3,7 +3,8 @@ import {describe,it,expect} from 'vitest';
 import {Client} from 'pg';
 import {randomUUID} from 'node:crypto';
 import {createClient} from '@supabase/supabase-js';
-const connectionString=process.env['SUPABASE_DB_URL'];
+// Requires an isolated database with a privileged test connection; production credentials must not be used.
+const connectionString=process.env['COD_TEST_DATABASE_URL'];
 const url=process.env['SUPABASE_URL'];const adminKey=process.env['SUPABASE_SERVICE_ROLE_KEY'];
 describe.skipIf(!connectionString||!url||!adminKey)('Rolled-back COD transactions',()=>{
  it('quotes COD, applies coupon, commits stock once, denies over-selling and protects unpaid collection',async()=>{
