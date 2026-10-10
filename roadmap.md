@@ -1,4 +1,9 @@
 # Commerce V1 roadmap
+- [ ] Switch new orders to server-validated COD only with collection, cancellation and inventory accounting
+- [ ] Implement private photo uploads and product galleries
+- [ ] Implement automatic supplier task allocation, retries and manual fulfillment queue
+- [ ] Implement COD refund records, downloadable receipts and executable account deletion
+- [ ] Run security scans, access checks and commerce transaction tests
 - [x] Reference-led storefront and core customer shopping screens
 - [x] Cloud catalogue, customer profile/account flows and private-record policies (authenticated end-to-end verification remains outstanding)
 - [x] Server-verified preview subtotal and safe blocked checkout boundary
