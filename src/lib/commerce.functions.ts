@@ -11,7 +11,13 @@ export const getCatalogue = createServerFn({ method: 'GET' }).handler(async () =
   const db = createClient<Database>(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: (input, init) => { const headers = new Headers(init?.headers); if (key.startsWith('sb_') && headers.get('Authorization') === `Bearer ${key}`) headers.delete('Authorization'); headers.set('apikey', key); return fetch(input, { ...init, headers }); } } });
   const [products, categories] = await Promise.all([db.from('products').select('*').eq('status','active').order('created_at'), db.from('categories').select('*').eq('active',true).order('sort_order')]);
   if (products.error || categories.error) throw new Error('The catalogue could not be loaded. Please try again.');
-  return { products: products.data ?? [], categories: categories.data ?? [] };
+  const images=await db.from('product_images').select('product_id,object_path').order('sort_order');
+  if(images.error)throw new Error('Product photos could not be loaded');
+  const signed=await db.storage.from('product-images').createSignedUrls((images.data??[]).map(i=>i.object_path),3600);
+  if((images.data??[]).length&&signed.error)throw new Error('Product photos are temporarily unavailable');
+  const browserOrigin=process.env['VITE_SUPABASE_URL']??url;
+  const photos=(images.data??[]).map((image,index)=>({productId:image.product_id,url:signed.data?.[index]?.signedUrl?.replace(url,browserOrigin)}));
+  return { products:(products.data??[]).map(p=>({...p,photos:photos.filter(i=>i.productId===p.id&&i.url).map(i=>i.url).filter((u):u is string=>typeof u==='string')})), categories: categories.data ?? [] };
 });
 export const quoteCart = createServerFn({ method: 'POST' }).inputValidator((input) => z.object({ items: cartSchema, coupon: z.string().trim().max(50).default('') }).parse(input)).handler(async ({ data }) => {
   const url = process.env['SUPABASE_URL']; const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
