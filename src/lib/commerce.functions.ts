@@ -13,7 +13,9 @@ export const getCatalogue = createServerFn({ method: 'GET' }).handler(async () =
   if (products.error || categories.error) throw new Error('The catalogue could not be loaded. Please try again.');
   const images=await db.from('product_images').select('product_id,object_path').order('sort_order');
   if(images.error)throw new Error('Product photos could not be loaded');
-  const signed=await db.storage.from('product-images').createSignedUrls((images.data??[]).map(i=>i.object_path),3600);
+  // Only paths authorized by the public catalogue query above may be signed.
+  const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
+  const signed=await supabaseAdmin.storage.from('product-images').createSignedUrls((images.data??[]).map(i=>i.object_path),3600);
   if((images.data??[]).length&&signed.error)throw new Error('Product photos are temporarily unavailable');
   const browserOrigin=process.env['VITE_SUPABASE_URL']??url;
   const photos=(images.data??[]).map((image,index)=>({productId:image.product_id,url:signed.data?.[index]?.signedUrl?.replace(url,browserOrigin)}));
