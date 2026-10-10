@@ -14,3 +14,10 @@ export const uploadProductPhoto=createServerFn({method:'POST'}).middleware([requ
  const inserted=await context.supabase.from('product_images').insert({product_id:data.productId,object_path:path,sort_order:Date.now()%2147483647});if(inserted.error){await supabaseAdmin.storage.from('product-images').remove([path]);throw new Error('Image could not be linked to product')}
  return {ok:true};
 });
+export const removeProductPhoto=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(input=>z.object({id:z.string().uuid()}).parse(input)).handler(async({data,context})=>{
+ const check=await context.supabase.rpc('staff_has_role',{allowed:['owner','admin','catalogue']});if(check.error||!check.data)throw new Error('Catalogue staff access required');
+ const photo=await context.supabase.from('product_images').select('object_path').eq('id',data.id).single();if(photo.error)throw new Error('Photo unavailable');
+ const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
+ const removed=await supabaseAdmin.storage.from('product-images').remove([photo.data.object_path]);if(removed.error)throw new Error('Photo file could not be removed. Please retry.');
+ const deleted=await context.supabase.from('product_images').delete().eq('id',data.id);if(deleted.error)throw new Error('Photo record could not be removed. Please retry.');return {ok:true};
+});
