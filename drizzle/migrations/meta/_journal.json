@@ -64,6 +64,13 @@
       "when": 1791654253160,
       "tag": "0008_cod_privacy_and_media_security",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791654315566,
+      "tag": "0009_require_validated_photo_uploads",
+      "breakpoints": true
     }
   ]
 }
