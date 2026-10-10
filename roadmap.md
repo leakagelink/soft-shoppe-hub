@@ -4,7 +4,13 @@
 - [x] Server-verified preview subtotal and safe blocked checkout boundary
 - [x] Foundational supplier/inventory schema and protected staff reads/limited edits
 - [x] Six critical rule tests and public shopping/mobile verification; launch gaps documented
-- [ ] Add transactional ordering/reservations, verified payment boundary and coupon/shipping/tax configuration
-- [ ] Add staff catalogue/inventory/supplier operations, fulfillment, audit history and customer order requests
-- [ ] Verify security/business rules and document any remaining V1 gaps
+- [x] Add transactional reservation/capture primitives, signature-verified payment boundary and coupon/shipping/tax configuration (live checkout remains disabled)
+- [x] Add staff catalogue/inventory/supplier operations, fulfillment, audit history and customer order requests
+- [x] Verify 18 tests, public desktop/mobile checkout and access boundaries; document remaining V1 gaps
+- [ ] Authenticated customer/staff and concurrency verification — blocked by a signed-in test account and isolated commerce fixtures
+- [ ] Complete gateway ordering, discounted final totals, pending/failed reconciliation and refunds — blocked by gateway credentials and merchant-approved rules
+- [ ] Product image upload activation — blocked by Cloud storage access configuration
+- [ ] Supplier automation/performance and failure/retry handling — blocked by supplier specifications and tested adapters
+- [ ] Real reviews, notifications, campaign content, invoices and deletion/retention execution — blocked by approved merchant content and operating/legal rules; these workflows are not implemented
+- [ ] Production SEO/consent analytics and backup/restore rehearsal — blocked by published domain, approved consent policy and confirmed backup capability
 - [ ] Live activation — blocked by verified merchant catalogue, Indian gateway credentials, shipping/tax configuration and supplier agreements
