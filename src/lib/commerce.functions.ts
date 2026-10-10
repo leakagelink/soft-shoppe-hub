@@ -20,7 +20,9 @@ export const quoteCart = createServerFn({ method: 'POST' }).inputValidator((inpu
   const {data: products,error} = await db.from('products').select('id,price_paise,is_demo').eq('status','active').in('id',data.items.map(i=>i.productId));
   if(error) throw new Error('Prices could not be verified');
   const subtotal = calculateSubtotal(data.items,products ?? []);
-  return { subtotal, discount: 0, couponError: data.coupon ? 'This coupon is not valid or is no longer available.' : null, shipping: null, tax: null, payable: null, purchasingEnabled: false, reason: (products ?? []).some(p=>p.is_demo) ? 'Demonstration products cannot be purchased. No payment will be taken.' : 'Payment, shipping and tax configuration must be completed before orders can be accepted.' };
+  let discount=0;let couponError:string|null=null;
+  if(data.coupon){const result=await db.rpc('preview_coupon',{_code:data.coupon,_items:data.items});if(result.error)throw new Error('Coupon could not be verified');const parsed=z.object({valid:z.boolean(),discount:z.number().int().min(0)}).parse(result.data);discount=parsed.discount;if(!parsed.valid)couponError='This coupon is not valid or is no longer available.';}
+  return { subtotal, discount, couponError, shipping: null, tax: null, payable: null, purchasingEnabled: false, reason: (products ?? []).some(p=>p.is_demo) ? 'Demonstration products cannot be purchased. No payment will be taken.' : 'Payment, shipping and tax configuration must be completed before orders can be accepted.' };
 });
 export const getStaffData = createServerFn({ method:'GET' }).middleware([requireSupabaseAuth]).handler(async ({context}) => {
   const {data: allowed,error} = await context.supabase.rpc('staff_has_role',{allowed:['owner','admin','operations','support','catalogue']});

@@ -855,6 +855,8 @@ export type Database = {
         Args: { _delta: number; _product: string; _reason: string }
         Returns: undefined
       }
+      check_delivery: { Args: { _pincode: string }; Returns: Json }
+      preview_coupon: { Args: { _code: string; _items: Json }; Returns: Json }
       record_captured_payment: {
         Args: {
           _amount: number
@@ -873,6 +875,10 @@ export type Database = {
         Args: { _address: string; _items: Json; _key: string; _user: string }
         Returns: string
       }
+      review_order_request: {
+        Args: { _id: string; _note: string; _status: string }
+        Returns: undefined
+      }
       staff_has_role: { Args: { allowed: string[] }; Returns: boolean }
       update_fulfillment: {
         Args: {
@@ -882,6 +888,10 @@ export type Database = {
           _tracking: string
           _url: string
         }
+        Returns: undefined
+      }
+      update_support_ticket: {
+        Args: { _id: string; _status: string }
         Returns: undefined
       }
     }

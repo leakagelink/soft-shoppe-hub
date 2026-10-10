@@ -1,0 +1,5 @@
+CREATE OR REPLACE FUNCTION public.check_delivery(_pincode text) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE s public.shipping_rules; BEGIN IF _pincode !~ '^[1-9][0-9]{5}$' THEN RAISE EXCEPTION 'Invalid PIN'; END IF; SELECT * INTO s FROM public.shipping_rules WHERE pincode=_pincode AND active; IF NOT FOUND THEN RETURN jsonb_build_object('serviceable',false); END IF; RETURN jsonb_build_object('serviceable',true,'fee_paise',s.fee_paise,'min_days',s.min_days,'max_days',s.max_days,'cod_enabled',false); END $$;
+REVOKE ALL ON FUNCTION public.check_delivery(text) FROM PUBLIC; GRANT EXECUTE ON FUNCTION public.check_delivery(text) TO anon,authenticated;
+ALTER TABLE public.inventory VALIDATE CONSTRAINT inventory_reservation_bounds;
+ALTER TABLE public.products VALIDATE CONSTRAINT product_tax_bounds;
+ALTER TABLE public.products VALIDATE CONSTRAINT product_return_bounds;
