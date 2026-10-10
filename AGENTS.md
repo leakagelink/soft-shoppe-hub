@@ -27,3 +27,6 @@
 - Supplier operational reporting derives task counts from authorized staff data and labels its sample window; it does not imply revenue or profit.
 - Shopping motion uses a shared progressive-enhancement observer and CSS transitions; content remains visible without JavaScript and reduced-motion preferences disable effects.
 - The shared sticky bag derives its item count and indicative subtotal from the existing cart; checkout remains authoritative and mobile placement clears bottom navigation.
+- Size/colour options are independently purchasable product SKUs grouped by family; cart, order snapshots and existing transaction locks continue using product IDs so stock and refunds remain SKU-specific.
+- Restock subscriptions are owner-scoped and database transitions create one in-app notification per subscription; no email or WhatsApp delivery is implied.
+- Public support contact settings are writable only by owner/admin roles; unset contact numbers never generate fabricated WhatsApp links.
