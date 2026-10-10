@@ -36,6 +36,13 @@
       "when": 1791649180635,
       "tag": "0004_coupon_quote_and_function_access",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791649273622,
+      "tag": "0005_shipping_lookup_and_constraint_validation",
+      "breakpoints": true
     }
   ]
 }

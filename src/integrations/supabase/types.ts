@@ -855,6 +855,7 @@ export type Database = {
         Args: { _delta: number; _product: string; _reason: string }
         Returns: undefined
       }
+      check_delivery: { Args: { _pincode: string }; Returns: Json }
       preview_coupon: { Args: { _code: string; _items: Json }; Returns: Json }
       record_captured_payment: {
         Args: {
