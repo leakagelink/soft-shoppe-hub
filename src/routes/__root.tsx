@@ -18,6 +18,7 @@ import { ConnectivityStatus } from '@/components/connectivity-status';
 import { ShoppingMotion } from '@/components/shopping-motion';
 import { StickyCart } from '@/components/sticky-cart';
 import { ShoppingLanguage } from '@/components/shopping-language';
+import { SplashScreen } from '@/components/splash-screen';
 import { Toaster } from 'sonner';
 
 function NotFoundComponent() {
@@ -124,7 +125,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ShoppingLanguage><StoreProvider><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><StickyCart/><Toaster position="top-right" richColors /></StoreProvider></ShoppingLanguage>
+      <ShoppingLanguage><StoreProvider><SplashScreen/><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><StickyCart/><Toaster position="top-right" richColors /></StoreProvider></ShoppingLanguage>
     </QueryClientProvider>
   );
 }
