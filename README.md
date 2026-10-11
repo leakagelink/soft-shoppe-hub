@@ -1,4 +1,4 @@
-# Soft Shoppe Hub
+# Nanhaa
 
 # MASTER PROMPT — PREMIUM E-COMMERCE V1 | REFERENCE-DRIVEN UI/UX
 
@@ -561,7 +561,7 @@ Prioritize visual fidelity, functional shopping workflows, secure payments, inve
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://soft-shoppe-hub.lovable.app
+**Live app**: https://nanhaa.store
 
 ## Build with Lovable
 
