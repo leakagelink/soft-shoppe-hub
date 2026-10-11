@@ -99,6 +99,13 @@
       "when": 1791697582974,
       "tag": "0013_account_deletion_scrub_more",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791697652029,
+      "tag": "0014_account_deletion_review_text",
+      "breakpoints": true
     }
   ]
 }
