@@ -16,7 +16,7 @@ describe.skipIf(!connectionString||!url||!adminKey)('Rolled-back COD transaction
    const product=`test-${randomUUID()}`;const pin='999991';
    await db.query("INSERT INTO public.products(id,name,sku,price_paise,image_key,status,is_demo,tax_bps,tax_inclusive) VALUES($1,'COD test item',$1,10000,'lamp','active',false,1800,false)",[product]);
    await db.query('INSERT INTO public.inventory(product_id,quantity,reserved) VALUES($1,1,0)',[product]);
-   await db.query("INSERT INTO public.shipping_rules(pincode,fee_paise,min_days,max_days,active,cod_enabled) VALUES($1,1000,2,5,true,true) ON CONFLICT(pincode) DO UPDATE SET fee_paise=1000,active=true",[pin]);
+   await db.query("INSERT INTO public.shipping_rules(pincode,fee_paise,min_days,max_days,active,cod_enabled) VALUES($1,1000,2,5,true,true) ",[pin]);
    const code=`TEST${randomUUID().replaceAll('-','').slice(0,12)}`;
    await db.query("INSERT INTO public.coupons(code,percent,max_discount_paise,starts_at,ends_at,active) VALUES($1,10,2000,now()-interval '1 day',now()+interval '1 day',true)",[code]);
    const items=JSON.stringify([{productId:product,quantity:1}]);

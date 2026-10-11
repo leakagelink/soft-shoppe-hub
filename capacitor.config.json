@@ -1,7 +1,13 @@
 {
   "appId": "store.nanhaa.app",
   "appName": "Nanhaa",
-  "webDir": "dist/client",
-  "server": { "url": "https://nanhaa.store", "cleartext": false, "androidScheme": "https" },
-  "android": { "allowMixedContent": false }
+  "webDir": "android-shell",
+  "server": {
+    "url": "https://nanhaa.store",
+    "cleartext": false,
+    "androidScheme": "https",
+    "allowNavigation": ["nanhaa.store", "www.nanhaa.store"],
+    "errorPath": "index.html"
+  },
+  "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false }
 }

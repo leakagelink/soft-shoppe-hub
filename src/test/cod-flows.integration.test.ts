@@ -39,11 +39,15 @@ describe.skipIf(!url||!key||!publicKey)('Isolated COD customer and staff flows',
    const request=required(await winner.rpc('request_order_action',{_order:id,_kind:'return',_reason:'Full order return test'}));
    required(await staff.rpc('review_order_request',{_id:request,_status:'approved',_note:'Return inspected and approved'}));
    expect((await winner.rpc('prepare_account_deletion')).error).not.toBeNull();
+   required(await winner.rpc('request_account_deletion',{_reason:'Active return pending'}));expect(required(await admin.from('account_deletion_requests').select('status').eq('user_id',users[winningIndex]??'').single()).status).toBe('awaiting_obligations');
+   required(await admin.from('shipping_rules').update({cod_enabled:false}).eq('id',shippingId??''));expect(required(await a.rpc('quote_cod_order',{_items:items,_pincode:pin,_coupon:''})).purchasingEnabled).toBe(false);expect((await a.rpc('check_delivery',{_pincode:pin})).data).toMatchObject({cod_enabled:false});required(await admin.from('shipping_rules').update({cod_enabled:true}).eq('id',shippingId??''));
    required(await staff.rpc('complete_cod_request',{_request:request,_note:'Entire order received back'}));
    const refund=required(await admin.from('refunds').select('id,amount_paise').eq('order_id',id).single());expect(refund.amount_paise).toBe(12800);
    required(await staff.rpc('complete_cod_refund',{_id:refund.id,_reference:'test-transfer-'+randomUUID()}));
    expect(required(await admin.from('orders').select('status').eq('id',id).single()).status).toBe('refunded');
    expect((await winner.rpc('prepare_account_deletion')).error).toBeNull();
+   expect(required(await admin.from('account_deletion_requests').select('user_id').eq('user_id',users[winningIndex]??''))).toEqual([]);
+   for(const t of ['cart_items','wishlist','addresses','support_tickets','restock_subscriptions','notifications'] as const)expect(required(await admin.from(t).select('user_id').eq('user_id',users[winningIndex]??''))).toEqual([]);
    expect(required(await admin.from('orders').select('user_id,address_snapshot,total_paise').eq('id',id).single())).toEqual({user_id:null,address_snapshot:{deleted:true},total_paise:12800});
    expect((await admin.auth.admin.deleteUser(users[winningIndex]??'')).error).toBeNull();
   }finally{
