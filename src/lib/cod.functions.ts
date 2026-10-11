@@ -15,8 +15,8 @@ export const placeCodOrder=createServerFn({method:'POST'}).middleware([requireSu
  const r=await context.supabase.rpc('place_cod_order',{_address:data.address,_items:data.items,_coupon:data.coupon,_key:data.key,_expected:data.expected});if(r.error)throw new Error('Order could not be placed. Review prices, stock and delivery again before retrying.');return {id:r.data};
 });
 export const deleteCustomerAccount=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((input)=>z.object({confirmation:z.literal('DELETE')}).parse(input)).handler(async({context})=>{
- const prepared=await context.supabase.rpc('prepare_account_deletion');if(prepared.error)throw new Error('Resolve active orders, COD collections, refunds or requests before deleting your account. Staff accounts require an administrator.');
+ const prepared=await context.supabase.rpc('prepare_account_deletion');if(prepared.error){const reason='Active orders, COD collections, refunds or requests must finish first.';const queued=await context.supabase.rpc('request_account_deletion',{_reason:reason});if(queued.error)throw new Error('Staff accounts require an administrator to delete.');return {ok:false as const,status:'awaiting_obligations',message:'Your deletion request is recorded. We will delete your account once your active orders, COD collection or refunds are settled, and within 30 days after that. You can check status on this page.'};}
  const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
  const result=await supabaseAdmin.auth.admin.deleteUser(context.userId,true);if(result.error)throw new Error('Account deletion could not finish. Your personal profile was cleared; please retry or contact support.');
- return {ok:true};
+ return {ok:true as const,status:'deleted',message:'Account deleted'};
 });
