@@ -1,0 +1,2 @@
+CREATE POLICY coupons_public_read ON public.coupons FOR SELECT TO anon, authenticated USING (active AND now() BETWEEN starts_at AND ends_at);
+INSERT INTO public.coupons (code, percent, min_subtotal_paise, max_discount_paise, starts_at, ends_at, active) VALUES ('WELCOME10', 10, 19900, 10000, now(), now() + interval '1 year', true), ('LITTLE15', 15, 49900, 15000, now(), now() + interval '1 year', true);
