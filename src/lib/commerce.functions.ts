@@ -34,7 +34,7 @@ export const quoteCart = createServerFn({ method: 'POST' }).inputValidator((inpu
   const subtotal = calculateSubtotal(data.items,products ?? []);
   let discount=0;let couponError:string|null=null;
   if(data.coupon){const result=await db.rpc('preview_coupon',{_code:data.coupon,_items:data.items});if(result.error)throw new Error('Coupon could not be verified');const parsed=z.object({valid:z.boolean(),discount:z.number().int().min(0)}).parse(result.data);discount=parsed.discount;if(!parsed.valid)couponError='This coupon is not valid or is no longer available.';}
-  return { subtotal, discount, couponError, shipping: null, tax: null, payable: null, purchasingEnabled: false, reason: 'Delivery charge, taxes and final COD total are confirmed at checkout after you enter your PIN code.' };
+  return { subtotal, discount, couponError, shipping: null, tax: null, payable: null, stage: 'bag-preview' as const, reason: 'Delivery charge, taxes and final COD total are confirmed at checkout after you enter your PIN code.' };
 });
 export const listActiveCoupons = createServerFn({ method: 'GET' }).handler(async () => {
   const url = process.env['SUPABASE_URL']; const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
