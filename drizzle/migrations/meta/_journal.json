@@ -92,6 +92,27 @@
       "when": 1791694924747,
       "tag": "0012_demo_coupons_public_read",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791697582974,
+      "tag": "0013_account_deletion_scrub_more",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791697652029,
+      "tag": "0014_account_deletion_review_text",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1791697691973,
+      "tag": "0015_revoke_trigger_fn_execute",
+      "breakpoints": true
     }
   ]
 }

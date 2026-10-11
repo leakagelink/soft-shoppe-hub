@@ -1,6 +1,6 @@
 # Store readiness and activation
 
-The current implementation is a development storefront, not a complete production V1. The working catalogue is database-backed and all supplied demonstration products are labelled. The provisional brand name “little things”, generated photos, catalogue names and sample prices are creative placeholders requiring merchant approval.
+Nanhaa (https://nanhaa.store) — COD-only storefront. Live selling requires configured delivery PIN codes; online payments, GST invoices and supplier automation are not enabled.
 
 ## Current COD release
 - All new checkout orders use COD only. The database validates sale approval, product-specific tax, shipping, coupon, stock and final total; duplicate submission keys return the same order. Sample products remain blocked.
