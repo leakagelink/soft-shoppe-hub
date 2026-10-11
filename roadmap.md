@@ -19,3 +19,7 @@
 - [x] Verified-purchase reviews, order notifications, live collections, supplier task performance reporting and offline feedback
 - [x] Photo upload UI now uses the role-gated validated upload function, not denied direct storage uploads
 - [x] Online payments deferred by user: all current new orders use COD; no successful online payment integration is claimed
+## Done: conversion features (2026-10-11)
+- Trust badges, real low-stock urgency, PIN delivery estimate, top-rated-first reviews, "Shoppers also loved" on product screen
+- Free-shipping progress bar, coupon chips (WELCOME10/LITTLE15 seeded, public read policy), remove-to-wishlist nudge on cart
+- One-time bag reminder banner; order status notifications already via DB trigger
