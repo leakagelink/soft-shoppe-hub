@@ -247,8 +247,10 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 /* Splash screen */
-.splash-screen{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--background);overflow:hidden;transition:opacity .55s ease,visibility .55s}
-.splash-fade{opacity:0;visibility:hidden}
+.splash-screen{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--background);overflow:hidden;transition:opacity .55s ease,visibility .55s;animation:splash-auto-hide 2.6s ease forwards}
+/* CSS-only fallback: splash hides even if JavaScript fails to load */
+@keyframes splash-auto-hide{0%,70%{opacity:1;visibility:visible;pointer-events:auto}100%{opacity:0;visibility:hidden;pointer-events:none}}
+.splash-fade{opacity:0;visibility:hidden;pointer-events:none}
 .splash-blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.85;animation:splash-drift 5s ease-in-out infinite alternate}
 .splash-blob-mint{width:55vmax;height:55vmax;background:var(--mint);top:-18vmax;left:-14vmax}
 .splash-blob-blush{width:48vmax;height:48vmax;background:var(--blush);bottom:-16vmax;right:-12vmax;animation-delay:-1.6s}
