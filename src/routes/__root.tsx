@@ -19,6 +19,7 @@ import { ShoppingMotion } from '@/components/shopping-motion';
 import { StickyCart } from '@/components/sticky-cart';
 import { ShoppingLanguage } from '@/components/shopping-language';
 import { SplashScreen } from '@/components/splash-screen';
+import { BagReminder } from '@/components/bag-reminder';
 import { Toaster } from 'sonner';
 
 function NotFoundComponent() {
@@ -125,7 +126,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ShoppingLanguage><StoreProvider><SplashScreen/><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><StickyCart/><Toaster position="top-right" richColors /></StoreProvider></ShoppingLanguage>
+      <ShoppingLanguage><StoreProvider><SplashScreen/><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><BagReminder /><Outlet /><StoreFooter /><StickyCart/><Toaster position="top-right" richColors /></StoreProvider></ShoppingLanguage>
     </QueryClientProvider>
   );
 }

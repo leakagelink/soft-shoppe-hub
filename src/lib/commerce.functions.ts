@@ -36,6 +36,15 @@ export const quoteCart = createServerFn({ method: 'POST' }).inputValidator((inpu
   if(data.coupon){const result=await db.rpc('preview_coupon',{_code:data.coupon,_items:data.items});if(result.error)throw new Error('Coupon could not be verified');const parsed=z.object({valid:z.boolean(),discount:z.number().int().min(0)}).parse(result.data);discount=parsed.discount;if(!parsed.valid)couponError='This coupon is not valid or is no longer available.';}
   return { subtotal, discount, couponError, shipping: null, tax: null, payable: null, purchasingEnabled: false, reason: (products ?? []).some(p=>p.is_demo) ? 'Demonstration products cannot be purchased. No payment will be taken.' : 'Payment, shipping and tax configuration must be completed before orders can be accepted.' };
 });
+export const listActiveCoupons = createServerFn({ method: 'GET' }).handler(async () => {
+  const url = process.env['SUPABASE_URL']; const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
+  if (!url || !key) return [];
+  const db = createClient<Database>(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: (input, init) => { const headers = new Headers(init?.headers); if (key.startsWith('sb_')) headers.delete('Authorization'); headers.set('apikey', key); return fetch(input, { ...init, headers }); } } });
+  const { data, error } = await db.from('coupons').select('code,percent,min_subtotal_paise').eq('active', true).order('percent');
+  if (error) return [];
+  return data ?? [];
+});
+
 export const getStaffData = createServerFn({ method:'GET' }).middleware([requireSupabaseAuth]).handler(async ({context}) => {
   const {data: allowed,error} = await context.supabase.rpc('staff_has_role',{allowed:['owner','admin','operations','support','catalogue']});
   if(error || !allowed) throw new Error('You do not have permission to access store operations.');

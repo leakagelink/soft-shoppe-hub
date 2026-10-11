@@ -85,6 +85,13 @@
       "when": 1791655968354,
       "tag": "0011_shopping_options_restock_support",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791694924747,
+      "tag": "0012_demo_coupons_public_read",
+      "breakpoints": true
     }
   ]
 }
