@@ -16,18 +16,24 @@ export type Database = {
     Tables: {
       account_deletion_requests: {
         Row: {
+          blocked_reason: string | null
           requested_at: string
           status: string
+          updated_at: string
           user_id: string
         }
         Insert: {
+          blocked_reason?: string | null
           requested_at?: string
           status?: string
+          updated_at?: string
           user_id: string
         }
         Update: {
+          blocked_reason?: string | null
           requested_at?: string
           status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
@@ -1189,6 +1195,7 @@ export type Database = {
         Args: { _note: string; _request: string }
         Returns: undefined
       }
+      delivery_setup_status: { Args: never; Returns: Json }
       place_cod_order: {
         Args: {
           _address: Json
@@ -1215,6 +1222,10 @@ export type Database = {
         Returns: undefined
       }
       release_unpaid_order: { Args: { _order: string }; Returns: undefined }
+      request_account_deletion: {
+        Args: { _reason: string }
+        Returns: undefined
+      }
       request_order_action: {
         Args: { _kind: string; _order: string; _reason: string }
         Returns: string
