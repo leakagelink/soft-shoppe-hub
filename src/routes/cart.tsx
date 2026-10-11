@@ -1,3 +1,5 @@
+import {CouponChips,FreeShippingBar} from '@/components/cart-offers';
+import {toast} from 'sonner';
 import {useShoppingLanguage} from '@/components/shopping-language';
 import {createFileRoute,Link} from '@tanstack/react-router';
 import {useState,useEffect} from 'react';
