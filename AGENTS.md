@@ -32,4 +32,4 @@
 - Public support contact settings are writable only by owner/admin roles; unset contact numbers never generate fabricated WhatsApp links.
 - Delivery serviceability comes only from owner-imported, validated PIN rules; checkout quotes require an active COD-enabled rule, so no rule means no orders.
 - Account deletion blocked by active obligations is recorded as a deletion request and completed after settlement, so retention is never indefinite.
-- Android packaging is a Capacitor shell over the live HTTPS site because pages are server-rendered.
+- Android packaging is a Capacitor project (android/) loading the live HTTPS site with a local offline page as webDir, because the build emits no static index.html and pages need SSR/server functions.
