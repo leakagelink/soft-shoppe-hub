@@ -124,7 +124,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ShoppingLanguage><StoreProvider><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><StickyCart/><Toaster position="top-right" richColors /></StoreProvider></ShoppingLanguage>
+      <ShoppingLanguage><StoreProvider><SplashScreen/><ShoppingMotion/><ConnectivityStatus/><StoreHeader /><Outlet /><StoreFooter /><StickyCart/><Toaster position="top-right" richColors /></StoreProvider></ShoppingLanguage>
     </QueryClientProvider>
   );
 }

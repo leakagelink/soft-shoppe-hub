@@ -245,3 +245,20 @@
   [data-slot="button"]:hover:not(:disabled) { transform: translateY(-2px); }
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Splash screen */
+.splash-screen{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--background);overflow:hidden;transition:opacity .55s ease,visibility .55s}
+.splash-fade{opacity:0;visibility:hidden}
+.splash-blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.85;animation:splash-drift 5s ease-in-out infinite alternate}
+.splash-blob-mint{width:55vmax;height:55vmax;background:var(--mint);top:-18vmax;left:-14vmax}
+.splash-blob-blush{width:48vmax;height:48vmax;background:var(--blush);bottom:-16vmax;right:-12vmax;animation-delay:-1.6s}
+.splash-blob-lavender{width:38vmax;height:38vmax;background:var(--lavender);bottom:-10vmax;left:-8vmax;animation-delay:-3s}
+.splash-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 32px;animation:splash-pop .8s var(--motion-ease,cubic-bezier(.22,1,.36,1)) both}
+.splash-logo{width:min(240px,62vw);height:auto;filter:drop-shadow(0 10px 24px rgba(60,50,45,.12))}
+.splash-tagline{font-size:12px;letter-spacing:.18em;color:var(--muted-foreground);text-transform:uppercase;animation:splash-pop .8s .15s var(--motion-ease,cubic-bezier(.22,1,.36,1)) both}
+.splash-bar{width:120px;height:3px;border-radius:99px;background:color-mix(in oklab,var(--foreground) 12%,transparent);overflow:hidden}
+.splash-bar-fill{display:block;height:100%;width:40%;border-radius:99px;background:var(--brand);animation:splash-load 1.5s ease-in-out infinite}
+@keyframes splash-drift{from{transform:translate(0,0) scale(1)}to{transform:translate(4vmax,3vmax) scale(1.08)}}
+@keyframes splash-pop{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes splash-load{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+@media (prefers-reduced-motion: reduce){.splash-blob,.splash-card,.splash-tagline,.splash-bar-fill{animation:none}}
