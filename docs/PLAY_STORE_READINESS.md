@@ -1,27 +1,38 @@
-# Nanhaa — Google Play readiness audit (11 Oct 2026)
+# Nanhaa — Google Play readiness (evidence-based, 11 Oct 2026)
 
-App: Nanhaa · Domain: https://nanhaa.store · Support: hello@nanhaa.store
+Not a compliance claim. Status: Verified / Failed / Unverified.
 
-## Verified
-- Brand: storefront, footer, policies, README use "Nanhaa"; sample-store footer/notices removed; all 6 catalogue products are live (COD).
-- Public pages exist: /privacy-policy, /delete-account (no sign-in required), /terms, /refund-policy, /shipping-policy, /contact.
-- In-app deletion: account page calls `prepare_account_deletion` then soft-deletes the Auth user (anonymised).
-- Deletion now removes: cart, wishlist, addresses, support tickets, deletion requests, stock alerts, notifications; clears profile name/phone/preferences; review text replaced; order requests anonymised.
-- Retained (anonymised, user link removed): orders, order items, refunds, fulfilments — needed for accounting, tax and dispute records. Suggested retention: 8 years (Indian accounting record norms) — confirm with an accountant.
-- Customer isolation: automated tests deny anonymous order creation, forged payment capture, COD collection, refunds, deletion, supplier task and notification reads; cross-customer test passes.
-- Admin RPCs check roles from the protected staff-roles table. Trigger functions are no longer callable directly.
-- Secrets: only publishable keys in `.env`; no service-role, payment or webhook secrets in source.
-- Tests: 37 passed, 1 skipped (direct DB transaction test needs a DB URL not available in the sandbox).
+## Commerce
+- Verified: checkout is COD-only and server-authoritative (`quote_cod_order` + `place_cod_order`): price, stock, coupon, tax, shipping and payable computed in the database; requires active, COD-enabled delivery rule.
+- Verified: bag page (`quoteCart`) is a preview only (`stage: 'bag-preview'`); it never enables purchase. Final total is confirmed at checkout.
+- Verified: admin Shipping tab imports validated PIN rules (CSV, 6-digit PIN, fee/days/COD checks). One owner-approved default rule exists: all India, free shipping, 3–7 days, COD on.
+- Verified (integration test on live DB, test data removed): correct total, stock deduction, duplicate submit -> one order, concurrent last-item -> one order, sold-out / unknown / COD-disabled PIN refused.
+- Unverified: stock of 10 per product is a placeholder — owner must confirm real stock.
 
-## Failed / blocking
-- No delivery PIN codes configured → checkout cannot complete any order yet.
-- Deletion is refused while an order is active or a COD collection/refund is pending (intentional to settle the obligation; user sees a clear message).
-- nanhaa.store domain and hello@nanhaa.store mailbox not verified live.
+## Account deletion
+- Verified: in-app (Privacy page) and public `/delete-account` (no sign-in).
+- Verified: deletes cart, wishlist, addresses, support tickets, stock alerts, notifications, profile data; active obligations -> saved `awaiting_obligations` request, completed after settlement.
+- Verified: no customer files in storage (only staff product photos).
+- Retained anonymized: orders, refunds, fulfillments. Retention period (proposed 8 years) — owner/accountant must confirm.
 
-## Unverified / outside this project
-- Android build (application ID, permissions, target API 36, signing): no Android project exists here; this is a web app. A wrapper (TWA/Capacitor) must be created and audited separately.
-- Data Safety form: declare name, email, phone, address, order history, in-app support messages; no location, card or contacts; data not sold; encrypted in transit; deletion available.
-- Seller details: legal name and grievance officer name not provided; pickup address Bhopal shown; not GST registered.
-- Stock counts set to 10 per product as a placeholder — merchant must confirm.
-- Policies (7-day returns, refund timing, delivery times) need merchant/legal review.
-- Database linter warns that signed-in users can execute security-definer RPCs; each RPC checks auth/roles internally (reviewed), no issue found but not independently pen-tested.
+## Domain & legal
+- Verified: https://nanhaa.store returns 200 for /, /privacy-policy, /delete-account, /contact, /terms.
+- Unverified: hello@nanhaa.store mailbox actually receives mail.
+- Unconfirmed (do not invent): legal business name, grievance officer name. Seller address on file: D 89, Ashoka Garden, Mayur Vihar, Bhopal 462023. Not GST registered — receipts only.
+
+## Android
+- Architecture: Capacitor shell loading https://nanhaa.store (app needs SSR + server functions; a bundled static app is impossible). Local `android-shell/index.html` = offline page. TWA is an alternative once Play signing SHA-256 is available for assetlinks.
+- Verified in config: appId `store.nanhaa.app`, compile/target SDK 36, INTERNET permission only, WebView debugging off, signing via untracked `keystore.properties`.
+- Not run: Android release build and device test — no Java/Android SDK in this workspace. No AAB exists until built on the owner's PC (see ANDROID_RELEASE.md).
+
+## Build/tests
+- Tests: 43 passed, 1 skipped (needs privileged DB role).
+- Lint: 2308 errors, all auto-fixable formatting; not changed.
+
+## Must resolve before submission
+1. Real stock per product.
+2. Legal business name + grievance officer name.
+3. Confirm hello@nanhaa.store mailbox works.
+4. Confirm retention period and policy promises (7-day return/refund, 3–7 day delivery, 48h reply).
+5. Build signed AAB on PC, test on a real Android device.
+6. Fill Data Safety form + store listing in Play Console.
