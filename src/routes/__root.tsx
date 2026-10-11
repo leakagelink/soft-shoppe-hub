@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "little things · Everyday discoveries" },
+      { title: "Nanhaa · Everyday discoveries" },
       { name: "description", content: "Thoughtful everyday discoveries for your home, your desk and your next adventure." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
