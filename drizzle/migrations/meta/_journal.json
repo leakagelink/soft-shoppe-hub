@@ -127,6 +127,13 @@
       "when": 1791699680553,
       "tag": "0017_cod_enabled_everywhere",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791700011673,
+      "tag": "0018_all_india_default_delivery",
+      "breakpoints": true
     }
   ]
 }

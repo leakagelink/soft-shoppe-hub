@@ -925,6 +925,7 @@ export type Database = {
           cod_enabled: boolean
           fee_paise: number
           id: string
+          is_default: boolean
           max_days: number
           min_days: number
           pincode: string
@@ -934,6 +935,7 @@ export type Database = {
           cod_enabled?: boolean
           fee_paise: number
           id?: string
+          is_default?: boolean
           max_days: number
           min_days: number
           pincode: string
@@ -943,6 +945,7 @@ export type Database = {
           cod_enabled?: boolean
           fee_paise?: number
           id?: string
+          is_default?: boolean
           max_days?: number
           min_days?: number
           pincode?: string
