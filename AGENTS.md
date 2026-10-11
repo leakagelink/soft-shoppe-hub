@@ -30,3 +30,6 @@
 - Size/colour options are independently purchasable product SKUs grouped by family; cart, order snapshots and existing transaction locks continue using product IDs so stock and refunds remain SKU-specific.
 - Restock subscriptions are owner-scoped and database transitions create one in-app notification per subscription; no email or WhatsApp delivery is implied.
 - Public support contact settings are writable only by owner/admin roles; unset contact numbers never generate fabricated WhatsApp links.
+- Delivery serviceability comes only from owner-imported, validated PIN rules; checkout quotes require an active COD-enabled rule, so no rule means no orders.
+- Account deletion blocked by active obligations is recorded as a deletion request and completed after settlement, so retention is never indefinite.
+- Android packaging is a Capacitor shell over the live HTTPS site because pages are server-rendered.
