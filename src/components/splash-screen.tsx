@@ -28,7 +28,7 @@ export function SplashScreen() {
       <span className="splash-blob splash-blob-blush" />
       <span className="splash-blob splash-blob-lavender" />
       <div className="splash-card">
-        <img src={logo} alt="Nanhaa" width={897} height={184} className="splash-logo" />
+        <img src={logo} alt="Nanhaa" width={1024} height={1024} className="splash-logo" />
         <p className="splash-tagline">chhoti cheezein, badi khushiyaan</p>
         <span className="splash-bar"><span className="splash-bar-fill" /></span>
       </div>
