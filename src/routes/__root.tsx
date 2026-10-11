@@ -112,6 +112,11 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var K="nanhaa-chunk-reload";function r(){try{var t=+sessionStorage.getItem(K)||0;if(Date.now()-t<10000)return;sessionStorage.setItem(K,String(Date.now()));}catch(e){}location.reload();}window.addEventListener("vite:preloadError",function(e){e.preventDefault();r();});window.addEventListener("unhandledrejection",function(e){var m=e&&e.reason&&String(e.reason.message||e.reason);if(m&&/Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/i.test(m)){r();}});})();`,
+          }}
+        />
       </head>
       <body>
         {children}
