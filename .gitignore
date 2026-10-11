@@ -40,3 +40,6 @@ dist-ssr
 *.jks
 *.keystore
 android/keystore.properties
+
+# Local environment (copy .env.example to .env)
+.env

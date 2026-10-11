@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android"
   },
   "overrides": {
     "rolldown": "1.2.1",
