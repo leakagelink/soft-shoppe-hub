@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nanhaa</string>
+    <string name="title_activity_main">Nanhaa</string>
+    <string name="package_name">store.nanhaa.app</string>
+    <string name="custom_url_scheme">store.nanhaa.app</string>
+</resources>
